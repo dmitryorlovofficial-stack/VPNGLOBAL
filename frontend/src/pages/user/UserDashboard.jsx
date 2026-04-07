@@ -96,14 +96,14 @@ export default function UserDashboard({ user, onLogout }) {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-dark-900 flex items-center justify-center">
+      <div className="min-h-screen bg-dark-950 flex items-center justify-center">
         <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-dark-900 flex">
+    <div className="min-h-screen bg-dark-950 flex">
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div
@@ -219,7 +219,7 @@ function ProfileTab({ data, onBuy }) {
       </div>
 
       {/* Subscription status */}
-      <div className="bg-dark-800 rounded-2xl border border-dark-700 p-5">
+      <div className="glass-card-2xl border border-dark-700 p-5">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-white font-semibold">Подписка</h3>
           <span
@@ -341,7 +341,7 @@ function ConnectTab({ data }) {
         {config.apps.map((app) => (
           <div
             key={app.name}
-            className="bg-dark-800 rounded-2xl border border-dark-700 p-5"
+            className="glass-card-2xl border border-dark-700 p-5"
           >
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-white font-semibold">{app.name}</h3>
@@ -368,7 +368,7 @@ function ConnectTab({ data }) {
               </button>
             )}
 
-            <div className="bg-dark-900 rounded-xl p-3 text-xs text-gray-400 space-y-1">
+            <div className="bg-dark-950 rounded-xl p-3 text-xs text-gray-400 space-y-1">
               <p className="font-medium text-gray-300 mb-2">Подключить вручную:</p>
               <p>1. Скопируйте ссылку подписки ниже</p>
               <p>2. Откройте приложение {app.name}</p>
@@ -380,10 +380,10 @@ function ConnectTab({ data }) {
 
       {/* Subscription URL */}
       {subUrl && (
-        <div className="bg-dark-800 rounded-2xl border border-dark-700 p-5 space-y-4">
+        <div className="glass-card-2xl border border-dark-700 p-5 space-y-4">
           <h3 className="text-white font-semibold text-sm">Ссылка подписки</h3>
           <div className="flex gap-2">
-            <div className="flex-1 bg-dark-900 border border-dark-600 rounded-xl px-3 py-2.5 text-sm text-gray-300 truncate font-mono">
+            <div className="flex-1 bg-dark-950 border border-dark-600 rounded-xl px-3 py-2.5 text-sm text-gray-300 truncate font-mono">
               {subUrl}
             </div>
             <button
@@ -455,7 +455,7 @@ function DevicesTab({ data, onRefresh }) {
       </div>
 
       {devices.length === 0 ? (
-        <div className="bg-dark-800 rounded-2xl border border-dark-700 p-8 text-center">
+        <div className="glass-card-2xl border border-dark-700 p-8 text-center">
           <WifiOff className="w-12 h-12 text-gray-600 mx-auto mb-3" />
           <p className="text-gray-400">Устройства не найдены</p>
           <p className="text-gray-500 text-sm mt-1">
@@ -469,7 +469,7 @@ function DevicesTab({ data, onRefresh }) {
             return (
               <div
                 key={device.id}
-                className="bg-dark-800 rounded-2xl border border-dark-700 p-4 flex items-center gap-4"
+                className="glass-card-2xl border border-dark-700 p-4 flex items-center gap-4"
               >
                 <div className="w-10 h-10 rounded-xl bg-dark-700 flex items-center justify-center shrink-0">
                   <Icon className="w-5 h-5 text-gray-400" />
@@ -558,7 +558,7 @@ function PurchaseModal({ email, onClose }) {
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/60" onClick={onClose} />
-      <div className="relative bg-dark-800 rounded-2xl border border-dark-700 w-full max-w-lg max-h-[90vh] overflow-y-auto">
+      <div className="relative glass-card-2xl border border-dark-700 w-full max-w-lg max-h-[90vh] overflow-y-auto">
         <div className="sticky top-0 bg-dark-800 border-b border-dark-700 px-5 py-4 flex items-center justify-between rounded-t-2xl">
           <h2 className="text-lg font-bold text-white">Выберите тариф</h2>
           <button
@@ -580,7 +580,7 @@ function PurchaseModal({ email, onClose }) {
             tariffs.map((tariff) => (
               <div
                 key={tariff.id}
-                className="bg-dark-900 rounded-xl border border-dark-600 p-4"
+                className="bg-dark-950 rounded-xl border border-dark-600 p-4"
               >
                 <div className="flex items-center justify-between mb-3">
                   <div>
