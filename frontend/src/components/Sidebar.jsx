@@ -67,7 +67,7 @@ export default function Sidebar({ isOpen, onClose, onLogout, user }) {
                 {/* Логотип */}
                 <div className="flex items-center justify-between p-4 border-b border-dark-700">
                     <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center">
+                        <div className="w-9 h-9 bg-gradient-to-br from-accent-400 to-accent-600 rounded-lg flex items-center justify-center shadow-glow-sm">
                             <Shield className="w-5 h-5 text-white" />
                         </div>
                         <div>
@@ -91,10 +91,10 @@ export default function Sidebar({ isOpen, onClose, onLogout, user }) {
                             end={to === '/'}
                             onClick={onClose}
                             className={({ isActive }) => clsx(
-                                'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors',
+                                'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200',
                                 isActive
-                                    ? 'bg-blue-600/20 text-blue-400'
-                                    : 'text-gray-400 hover:text-white hover:bg-dark-700'
+                                    ? 'bg-accent-500/10 text-accent-400 border-l-2 border-accent-400 shadow-glow-sm'
+                                    : 'text-gray-400 hover:text-accent-300 hover:bg-dark-700/50 border-l-2 border-transparent'
                             )}
                         >
                             <Icon className="w-5 h-5 flex-shrink-0" />
@@ -132,7 +132,7 @@ export default function Sidebar({ isOpen, onClose, onLogout, user }) {
             {/* Модалка смены пароля */}
             {showPwModal && (
                 <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60" onClick={() => setShowPwModal(false)}>
-                    <div className="bg-dark-800 border border-dark-700 rounded-xl w-full max-w-sm mx-4" onClick={e => e.stopPropagation()}>
+                    <div className="glass-card w-full max-w-sm mx-4" onClick={e => e.stopPropagation()}>
                         <div className="p-5 border-b border-dark-700">
                             <h2 className="text-lg font-semibold text-white">Смена пароля</h2>
                         </div>
@@ -143,7 +143,7 @@ export default function Sidebar({ isOpen, onClose, onLogout, user }) {
                                     type="password"
                                     value={pwForm.old}
                                     onChange={e => setPwForm({ ...pwForm, old: e.target.value })}
-                                    className="w-full bg-dark-700 border border-dark-600 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500"
+                                    className="w-full bg-dark-700/50 border border-dark-600/80 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-accent-500"
                                     required
                                 />
                             </div>
@@ -153,7 +153,7 @@ export default function Sidebar({ isOpen, onClose, onLogout, user }) {
                                     type="password"
                                     value={pwForm.new}
                                     onChange={e => setPwForm({ ...pwForm, new: e.target.value })}
-                                    className="w-full bg-dark-700 border border-dark-600 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500"
+                                    className="w-full bg-dark-700/50 border border-dark-600/80 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-accent-500"
                                     placeholder="мин. 6 символов"
                                     required
                                 />
@@ -164,7 +164,7 @@ export default function Sidebar({ isOpen, onClose, onLogout, user }) {
                                     type="password"
                                     value={pwForm.confirm}
                                     onChange={e => setPwForm({ ...pwForm, confirm: e.target.value })}
-                                    className="w-full bg-dark-700 border border-dark-600 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500"
+                                    className="w-full bg-dark-700/50 border border-dark-600/80 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-accent-500"
                                     required
                                 />
                             </div>
@@ -172,7 +172,7 @@ export default function Sidebar({ isOpen, onClose, onLogout, user }) {
                                 <button type="button" onClick={() => setShowPwModal(false)} className="flex-1 px-4 py-2.5 bg-dark-700 text-gray-300 rounded-lg text-sm hover:bg-dark-600">
                                     Отмена
                                 </button>
-                                <button type="submit" disabled={pwLoading} className="flex-1 px-4 py-2.5 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 disabled:opacity-50">
+                                <button type="submit" disabled={pwLoading} className="flex-1 px-4 py-2.5 bg-gradient-to-r from-accent-500 to-accent-600 text-white shadow-glow-sm rounded-lg text-sm hover:bg-accent-600 disabled:opacity-50">
                                     {pwLoading ? 'Сохранение...' : 'Сохранить'}
                                 </button>
                             </div>

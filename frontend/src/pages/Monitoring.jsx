@@ -48,7 +48,7 @@ function timeFormat(dateStr) {
 
 function ProgressBar({ value, max, size = 'md' }) {
     const pct = max > 0 ? Math.min(100, (value / max) * 100) : 0;
-    const color = pct > 90 ? 'bg-red-500' : pct > 70 ? 'bg-yellow-500' : 'bg-blue-500';
+    const color = pct > 90 ? 'bg-red-500' : pct > 70 ? 'bg-yellow-500' : 'bg-accent-500';
     const h = size === 'sm' ? 'h-1.5' : 'h-2';
     return (
         <div className={`w-full bg-dark-700 rounded-full ${h}`}>
@@ -92,7 +92,7 @@ function SeverityBadge({ severity }) {
     const styles = {
         error: 'bg-red-600/15 text-red-400',
         warning: 'bg-yellow-600/15 text-yellow-400',
-        info: 'bg-blue-600/15 text-blue-400',
+        info: 'bg-accent-500/15 text-accent-400',
     };
     return (
         <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${styles[severity] || styles.info}`}>
@@ -102,9 +102,9 @@ function SeverityBadge({ severity }) {
 }
 
 // Суммарная карточка
-function SummaryCard({ icon: Icon, label, value, sub, color = 'text-blue-400' }) {
+function SummaryCard({ icon: Icon, label, value, sub, color = 'text-accent-400' }) {
     return (
-        <div className="bg-dark-800 border border-dark-700 rounded-xl p-4">
+        <div className="glass-card p-4">
             <div className="flex items-center gap-3">
                 <div className={`p-2 rounded-lg bg-dark-700`}>
                     <Icon className={`w-5 h-5 ${color}`} />
@@ -198,7 +198,7 @@ function MonitorServerCard({ server, onRefreshServices }) {
                             <div className="flex items-center gap-2">
                                 <h3 className="text-sm font-semibold text-white truncate">{server.name}</h3>
                                 <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${
-                                    { node: 'bg-blue-600/20 text-blue-400', exit: 'bg-green-600/20 text-green-400', gateway: 'bg-yellow-600/20 text-yellow-400' }[server.role] || 'bg-dark-600 text-gray-400'
+                                    { node: 'bg-accent-500/15 text-accent-400', exit: 'bg-green-600/20 text-green-400', gateway: 'bg-yellow-600/20 text-yellow-400' }[server.role] || 'bg-dark-600 text-gray-400'
                                 }`}>
                                     {server.role}
                                 </span>
@@ -387,7 +387,7 @@ function MonitorServerCard({ server, onRefreshServices }) {
                             </div>
                         </div>
                     ) : server.agent_status === 'active' ? (
-                        <button onClick={loadServices} className="text-xs text-blue-400 hover:text-blue-300">
+                        <button onClick={loadServices} className="text-xs text-accent-400 hover:text-accent-300">
                             Загрузить статус сервисов
                         </button>
                     ) : (
@@ -450,12 +450,12 @@ function OverviewTab() {
                     color={summary.offlineServers > 0 ? 'text-yellow-400' : 'text-green-400'} />
                 <SummaryCard icon={Container} label="Агенты" value={`${summary.agentsActive}/${summary.agentsTotal}`}
                     color="text-cyan-400" />
-                <SummaryCard icon={Wifi} label="VPN клиенты" value={summary.totalClients} color="text-blue-400" />
+                <SummaryCard icon={Wifi} label="VPN клиенты" value={summary.totalClients} color="text-accent-400" />
                 <SummaryCard icon={Cpu} label="Средний CPU" value={`${summary.avgCpu}%`}
                     color={summary.avgCpu > 80 ? 'text-yellow-400' : 'text-green-400'} />
                 <div className="col-span-2 lg:col-span-1 flex items-center justify-center">
                     <button onClick={handleRefreshAll} disabled={refreshing}
-                        className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50 w-full justify-center">
+                        className="flex items-center gap-2 px-4 py-2.5 btn-primary disabled:opacity-50 w-full justify-center">
                         {refreshing ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
                         Обновить все
                     </button>
@@ -621,7 +621,7 @@ function AlertsTab() {
 // =================== Таб: Логи ===================
 
 const LEVEL_STYLES = {
-    info: { icon: Info, color: 'text-blue-400', bg: 'bg-blue-600/10' },
+    info: { icon: Info, color: 'text-accent-400', bg: 'bg-blue-600/10' },
     warning: { icon: AlertTriangle, color: 'text-yellow-400', bg: 'bg-yellow-600/10' },
     error: { icon: AlertCircle, color: 'text-red-400', bg: 'bg-red-600/10' },
 };
@@ -667,7 +667,7 @@ function LogsTab() {
                         type="text"
                         value={search}
                         onChange={e => { setSearch(e.target.value); setPage(1); }}
-                        className="w-full bg-dark-800 border border-dark-700 rounded-lg pl-10 pr-3 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+                        className="w-full bg-dark-800 border border-dark-700 rounded-lg pl-10 pr-3 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-accent-500"
                         placeholder="Поиск в логах..."
                     />
                 </div>
@@ -694,7 +694,7 @@ function LogsTab() {
             </div>
 
             {/* Таблица логов */}
-            <div className="bg-dark-800 border border-dark-700 rounded-xl overflow-hidden">
+            <div className="glass-card overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                         <thead>
@@ -778,7 +778,7 @@ export default function Monitoring() {
             </div>
 
             {/* Табы */}
-            <div className="flex gap-1 bg-dark-800 border border-dark-700 rounded-xl p-1">
+            <div className="flex gap-1 glass-card p-1">
                 {TABS.map(tab => {
                     const Icon = tab.icon;
                     const isActive = activeTab === tab.id;
@@ -788,7 +788,7 @@ export default function Monitoring() {
                             onClick={() => setActiveTab(tab.id)}
                             className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors flex-1 justify-center ${
                                 isActive
-                                    ? 'bg-blue-600/20 text-blue-400'
+                                    ? 'bg-accent-500/15 text-accent-400'
                                     : 'text-gray-400 hover:text-white hover:bg-dark-700'
                             }`}
                         >

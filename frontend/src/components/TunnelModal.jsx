@@ -114,7 +114,7 @@ export default function TunnelModal({ serverList, existingTunnels = [], onClose,
         setLoading(false);
     };
 
-    const inputClass = 'w-full bg-dark-700 border border-dark-600 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500';
+    const inputClass = 'w-full bg-dark-700/50 border border-dark-600/80 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-accent-500';
 
     // Роль сервера для отображения в dropdown
     const serverLabel = (s) => {
@@ -136,7 +136,7 @@ export default function TunnelModal({ serverList, existingTunnels = [], onClose,
                     {/* Схема маршрута */}
                     <div className="flex items-center gap-3 p-3 bg-dark-700/50 rounded-lg border border-dark-600">
                         <div className="flex-1">
-                            <div className="text-[9px] text-blue-400 font-semibold uppercase tracking-wider mb-1">Entry (вход)</div>
+                            <div className="text-[9px] text-accent-400 font-semibold uppercase tracking-wider mb-1">Entry (вход)</div>
                             <div className="text-xs text-gray-300">
                                 {selectedEntry ? selectedEntry.name : 'Не выбран'}
                             </div>
@@ -163,7 +163,7 @@ export default function TunnelModal({ serverList, existingTunnels = [], onClose,
                     {/* Entry + Exit */}
                     <div className="grid grid-cols-2 gap-3">
                         <div>
-                            <label className="block text-sm font-medium text-blue-400 mb-1.5">Entry (вход) *</label>
+                            <label className="block text-sm font-medium text-accent-400 mb-1.5">Entry (вход) *</label>
                             <select
                                 value={form.from_server_id}
                                 onChange={e => setForm({ ...form, from_server_id: e.target.value })}
@@ -192,7 +192,7 @@ export default function TunnelModal({ serverList, existingTunnels = [], onClose,
 
                     {/* Подсказка */}
                     <div className="flex items-start gap-2 text-[11px] text-gray-500 bg-dark-700/30 rounded-lg px-3 py-2">
-                        <Info className="w-3.5 h-3.5 mt-0.5 flex-shrink-0 text-blue-400/60" />
+                        <Info className="w-3.5 h-3.5 mt-0.5 flex-shrink-0 text-accent-400/60" />
                         <span>Entry принимает клиентов, Exit выпускает трафик. Один Entry может иметь несколько Exit и наоборот. Сервер не может быть Entry и Exit одновременно.</span>
                     </div>
 

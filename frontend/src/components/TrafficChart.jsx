@@ -16,7 +16,7 @@ function formatBytes(bytes) {
 function CustomTooltip({ active, payload, label }) {
     if (!active || !payload) return null;
     return (
-        <div className="bg-dark-700 border border-dark-600 rounded-lg p-3 shadow-xl">
+        <div className="bg-dark-800/95 backdrop-blur-md border border-dark-600/50 rounded-lg p-3 shadow-xl">
             <p className="text-xs text-gray-400 mb-2">{label}</p>
             {payload.map((entry, i) => (
                 <p key={i} className="text-sm" style={{ color: entry.color }}>
@@ -47,7 +47,7 @@ export default function TrafficChart({ clientId, className }) {
     ];
 
     return (
-        <div className={`bg-dark-800 border border-dark-700 rounded-xl p-5 ${className || ''}`}>
+        <div className={`glass-card p-5 ${className || ''}`}>
             <div className="flex items-center justify-between mb-4">
                 <h3 className="text-sm font-semibold text-white">Трафик</h3>
                 <div className="flex gap-1 bg-dark-700 rounded-lg p-0.5">
@@ -57,7 +57,7 @@ export default function TrafficChart({ clientId, className }) {
                             onClick={() => setPeriod(p.value)}
                             className={`px-3 py-1 text-xs rounded-md transition-colors ${
                                 period === p.value
-                                    ? 'bg-blue-600 text-white'
+                                    ? 'bg-accent-500 text-white shadow-glow-sm'
                                     : 'text-gray-400 hover:text-white'
                             }`}
                         >
@@ -78,7 +78,7 @@ export default function TrafficChart({ clientId, className }) {
             ) : (
                 <ResponsiveContainer width="100%" height={260}>
                     <LineChart data={data}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
+                        <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" opacity={0.5} />
                         <XAxis
                             dataKey="time"
                             tick={{ fontSize: 11, fill: '#64748b' }}
@@ -95,7 +95,7 @@ export default function TrafficChart({ clientId, className }) {
                             type="monotone"
                             dataKey="rx"
                             name="Download"
-                            stroke="#3b82f6"
+                            stroke="#06b6d4"
                             strokeWidth={2}
                             dot={false}
                         />
@@ -103,7 +103,7 @@ export default function TrafficChart({ clientId, className }) {
                             type="monotone"
                             dataKey="tx"
                             name="Upload"
-                            stroke="#10b981"
+                            stroke="#2dd4bf"
                             strokeWidth={2}
                             dot={false}
                         />

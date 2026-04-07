@@ -127,7 +127,7 @@ export default function QRModal({ clients: clientsList, onClose }) {
                         onClick={() => setTab('qr')}
                         className={`flex-1 px-4 py-3 text-sm font-medium text-center transition-colors ${
                             tab === 'qr'
-                                ? 'text-blue-400 border-b-2 border-blue-400'
+                                ? 'text-accent-400 border-b-2 border-blue-400'
                                 : 'text-gray-400 hover:text-white'
                         }`}
                     >
@@ -138,7 +138,7 @@ export default function QRModal({ clients: clientsList, onClose }) {
                         onClick={() => setTab('config')}
                         className={`flex-1 px-4 py-3 text-sm font-medium text-center transition-colors ${
                             tab === 'config'
-                                ? 'text-blue-400 border-b-2 border-blue-400'
+                                ? 'text-accent-400 border-b-2 border-blue-400'
                                 : 'text-gray-400 hover:text-white'
                         }`}
                     >
@@ -150,7 +150,7 @@ export default function QRModal({ clients: clientsList, onClose }) {
                             onClick={() => setTab('sub')}
                             className={`flex-1 px-4 py-3 text-sm font-medium text-center transition-colors ${
                                 tab === 'sub'
-                                    ? 'text-blue-400 border-b-2 border-blue-400'
+                                    ? 'text-accent-400 border-b-2 border-blue-400'
                                     : 'text-gray-400 hover:text-white'
                             }`}
                         >
@@ -184,11 +184,11 @@ export default function QRModal({ clients: clientsList, onClose }) {
                                     <input
                                         readOnly
                                         value={subUrl || ''}
-                                        className="flex-1 bg-dark-900 border border-dark-600 rounded-lg px-3 py-2.5 text-xs font-mono text-blue-400 focus:outline-none"
+                                        className="flex-1 bg-dark-900 border border-dark-600 rounded-lg px-3 py-2.5 text-xs font-mono text-accent-400 focus:outline-none"
                                     />
                                     <button
                                         onClick={handleCopySub}
-                                        className="px-4 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors flex items-center gap-2"
+                                        className="px-4 py-2.5 btn-primary transition-colors flex items-center gap-2"
                                     >
                                         {copiedSub ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                                         {copiedSub ? 'Готово' : 'Копировать'}
@@ -239,7 +239,7 @@ export default function QRModal({ clients: clientsList, onClose }) {
                             </button>
                             <button
                                 onClick={handleDownload}
-                                className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
+                                className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 btn-primary transition-colors"
                             >
                                 <Download className="w-4 h-4" />
                                 Скачать {isXray ? '.txt' : '.conf'}

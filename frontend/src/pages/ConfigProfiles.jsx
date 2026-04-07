@@ -20,7 +20,7 @@ const snippetTypeLabel = (type) => SNIPPET_TYPES.find(t => t.value === type)?.la
 
 const snippetTypeColor = (type) => {
     switch (type) {
-        case 'dns': return 'bg-blue-500/20 text-blue-400';
+        case 'dns': return 'bg-accent-500/20 text-accent-400';
         case 'routing_rule': return 'bg-green-500/20 text-green-400';
         case 'policy': return 'bg-purple-500/20 text-purple-400';
         case 'outbound': return 'bg-orange-500/20 text-orange-400';
@@ -171,7 +171,7 @@ export default function ConfigProfiles() {
                 <button
                     onClick={() => setTab('profiles')}
                     className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                        tab === 'profiles' ? 'bg-blue-600 text-white' : 'text-gray-400 hover:text-white'
+                        tab === 'profiles' ? 'bg-accent-500 text-white' : 'text-gray-400 hover:text-white'
                     }`}
                 >
                     <FileCode className="w-4 h-4 inline mr-2" />
@@ -180,7 +180,7 @@ export default function ConfigProfiles() {
                 <button
                     onClick={() => setTab('snippets')}
                     className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                        tab === 'snippets' ? 'bg-blue-600 text-white' : 'text-gray-400 hover:text-white'
+                        tab === 'snippets' ? 'bg-accent-500 text-white' : 'text-gray-400 hover:text-white'
                     }`}
                 >
                     <Puzzle className="w-4 h-4 inline mr-2" />
@@ -194,14 +194,14 @@ export default function ConfigProfiles() {
                     <div className="flex justify-end">
                         <button
                             onClick={() => { setEditingProfile(null); setShowProfileModal(true); }}
-                            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700"
+                            className="flex items-center gap-2 px-4 py-2 btn-primary"
                         >
                             <Plus className="w-4 h-4" /> Новый профиль
                         </button>
                     </div>
 
                     {profiles.map(profile => (
-                        <div key={profile.id} className="bg-dark-800 border border-dark-700 rounded-xl overflow-hidden">
+                        <div key={profile.id} className="glass-card overflow-hidden">
                             {/* Profile Header */}
                             <div
                                 className="flex items-center justify-between p-4 cursor-pointer hover:bg-dark-750"
@@ -212,7 +212,7 @@ export default function ConfigProfiles() {
                                         ? <ChevronDown className="w-5 h-5 text-gray-400" />
                                         : <ChevronRight className="w-5 h-5 text-gray-400" />
                                     }
-                                    <FileCode className="w-5 h-5 text-blue-400" />
+                                    <FileCode className="w-5 h-5 text-accent-400" />
                                     <div>
                                         <div className="flex items-center gap-2">
                                             <span className="font-medium text-white">{profile.name}</span>
@@ -240,7 +240,7 @@ export default function ConfigProfiles() {
                                     <div className="flex gap-1" onClick={e => e.stopPropagation()}>
                                         <button
                                             onClick={() => { setEditingProfile(profile); setShowProfileModal(true); }}
-                                            className="p-1.5 text-gray-400 hover:text-blue-400 rounded"
+                                            className="p-1.5 text-gray-400 hover:text-accent-400 rounded"
                                         >
                                             <Edit3 className="w-4 h-4" />
                                         </button>
@@ -278,14 +278,14 @@ export default function ConfigProfiles() {
                     <div className="flex justify-end">
                         <button
                             onClick={() => { setEditingSnippet(null); setShowSnippetModal(true); }}
-                            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700"
+                            className="flex items-center gap-2 px-4 py-2 btn-primary"
                         >
                             <Plus className="w-4 h-4" /> Новый сниппет
                         </button>
                     </div>
 
                     {snippets.map(snippet => (
-                        <div key={snippet.id} className="bg-dark-800 border border-dark-700 rounded-xl p-4">
+                        <div key={snippet.id} className="glass-card p-4">
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-3">
                                     <Puzzle className="w-5 h-5 text-purple-400" />
@@ -323,7 +323,7 @@ export default function ConfigProfiles() {
                                         </button>
                                         <button
                                             onClick={() => { setEditingSnippet(snippet); setShowSnippetModal(true); }}
-                                            className="p-1.5 text-gray-400 hover:text-blue-400 rounded"
+                                            className="p-1.5 text-gray-400 hover:text-accent-400 rounded"
                                         >
                                             <Edit3 className="w-4 h-4" />
                                         </button>
@@ -404,7 +404,7 @@ function ProfileDetail({ profile, allSnippets, onSetSnippets }) {
                     {hasChanges && (
                         <button
                             onClick={() => onSetSnippets(profile.id, selected)}
-                            className="flex items-center gap-1 px-3 py-1.5 bg-blue-600 text-white rounded-lg text-xs hover:bg-blue-700"
+                            className="flex items-center gap-1 px-3 py-1.5 btn-primary text-xs"
                         >
                             <Save className="w-3.5 h-3.5" /> Сохранить
                         </button>
@@ -416,7 +416,7 @@ function ProfileDetail({ profile, allSnippets, onSetSnippets }) {
                             key={snippet.id}
                             className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer border transition-colors ${
                                 selected.includes(snippet.id)
-                                    ? 'bg-blue-600/10 border-blue-600/30'
+                                    ? 'bg-accent-500/10 border-accent-500/30'
                                     : 'bg-dark-900 border-dark-700 hover:border-dark-600'
                             }`}
                         >
@@ -491,7 +491,7 @@ function ProfileModal({ profile, onSave, onClose }) {
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" onClick={onClose}>
-            <div className="bg-dark-800 border border-dark-700 rounded-xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+            <div className="glass-card w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
                 <div className="flex items-center justify-between p-5 border-b border-dark-700">
                     <h2 className="text-lg font-semibold text-white">
                         {profile ? 'Редактировать профиль' : 'Новый профиль'}
@@ -507,7 +507,7 @@ function ProfileModal({ profile, onSave, onClose }) {
                             type="text"
                             value={form.name}
                             onChange={e => setForm({ ...form, name: e.target.value })}
-                            className="w-full bg-dark-700 border border-dark-600 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500"
+                            className="w-full bg-dark-700/50 border border-dark-600/80 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-accent-500"
                             required
                         />
                     </div>
@@ -517,7 +517,7 @@ function ProfileModal({ profile, onSave, onClose }) {
                             type="text"
                             value={form.description}
                             onChange={e => setForm({ ...form, description: e.target.value })}
-                            className="w-full bg-dark-700 border border-dark-600 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500"
+                            className="w-full bg-dark-700/50 border border-dark-600/80 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-accent-500"
                         />
                     </div>
                     <div>
@@ -526,7 +526,7 @@ function ProfileModal({ profile, onSave, onClose }) {
                             value={form.base_config}
                             onChange={e => setForm({ ...form, base_config: e.target.value })}
                             rows={6}
-                            className="w-full bg-dark-900 border border-dark-600 rounded-lg px-3 py-2.5 text-xs text-gray-300 font-mono focus:outline-none focus:border-blue-500"
+                            className="w-full bg-dark-900 border border-dark-600 rounded-lg px-3 py-2.5 text-xs text-gray-300 font-mono focus:outline-none focus:border-accent-500"
                         />
                     </div>
                     <div>
@@ -535,14 +535,14 @@ function ProfileModal({ profile, onSave, onClose }) {
                             value={form.inbound_defaults}
                             onChange={e => setForm({ ...form, inbound_defaults: e.target.value })}
                             rows={4}
-                            className="w-full bg-dark-900 border border-dark-600 rounded-lg px-3 py-2.5 text-xs text-gray-300 font-mono focus:outline-none focus:border-blue-500"
+                            className="w-full bg-dark-900 border border-dark-600 rounded-lg px-3 py-2.5 text-xs text-gray-300 font-mono focus:outline-none focus:border-accent-500"
                         />
                     </div>
                     <div className="flex gap-3">
                         <button type="button" onClick={onClose} className="flex-1 px-4 py-2.5 bg-dark-700 text-gray-300 rounded-lg text-sm hover:bg-dark-600">
                             Отмена
                         </button>
-                        <button type="submit" disabled={saving} className="flex-1 px-4 py-2.5 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 disabled:opacity-50">
+                        <button type="submit" disabled={saving} className="flex-1 px-4 py-2.5 btn-primary disabled:opacity-50">
                             {saving ? 'Сохранение...' : 'Сохранить'}
                         </button>
                     </div>
@@ -584,7 +584,7 @@ function SnippetModal({ snippet, onSave, onClose }) {
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" onClick={onClose}>
-            <div className="bg-dark-800 border border-dark-700 rounded-xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+            <div className="glass-card w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
                 <div className="flex items-center justify-between p-5 border-b border-dark-700">
                     <h2 className="text-lg font-semibold text-white">
                         {snippet ? 'Редактировать сниппет' : 'Новый сниппет'}
@@ -600,7 +600,7 @@ function SnippetModal({ snippet, onSave, onClose }) {
                             type="text"
                             value={form.name}
                             onChange={e => setForm({ ...form, name: e.target.value })}
-                            className="w-full bg-dark-700 border border-dark-600 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500"
+                            className="w-full bg-dark-700/50 border border-dark-600/80 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-accent-500"
                             required
                         />
                     </div>
@@ -610,7 +610,7 @@ function SnippetModal({ snippet, onSave, onClose }) {
                             type="text"
                             value={form.description}
                             onChange={e => setForm({ ...form, description: e.target.value })}
-                            className="w-full bg-dark-700 border border-dark-600 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500"
+                            className="w-full bg-dark-700/50 border border-dark-600/80 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-accent-500"
                         />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
@@ -619,7 +619,7 @@ function SnippetModal({ snippet, onSave, onClose }) {
                             <select
                                 value={form.type}
                                 onChange={e => setForm({ ...form, type: e.target.value })}
-                                className="w-full bg-dark-700 border border-dark-600 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500"
+                                className="w-full bg-dark-700/50 border border-dark-600/80 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-accent-500"
                             >
                                 {SNIPPET_TYPES.map(t => (
                                     <option key={t.value} value={t.value}>{t.label}</option>
@@ -632,7 +632,7 @@ function SnippetModal({ snippet, onSave, onClose }) {
                                 type="number"
                                 value={form.sort_order}
                                 onChange={e => setForm({ ...form, sort_order: e.target.value })}
-                                className="w-full bg-dark-700 border border-dark-600 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500"
+                                className="w-full bg-dark-700/50 border border-dark-600/80 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-accent-500"
                             />
                         </div>
                     </div>
@@ -642,14 +642,14 @@ function SnippetModal({ snippet, onSave, onClose }) {
                             value={form.content}
                             onChange={e => setForm({ ...form, content: e.target.value })}
                             rows={8}
-                            className="w-full bg-dark-900 border border-dark-600 rounded-lg px-3 py-2.5 text-xs text-gray-300 font-mono focus:outline-none focus:border-blue-500"
+                            className="w-full bg-dark-900 border border-dark-600 rounded-lg px-3 py-2.5 text-xs text-gray-300 font-mono focus:outline-none focus:border-accent-500"
                         />
                     </div>
                     <div className="flex gap-3">
                         <button type="button" onClick={onClose} className="flex-1 px-4 py-2.5 bg-dark-700 text-gray-300 rounded-lg text-sm hover:bg-dark-600">
                             Отмена
                         </button>
-                        <button type="submit" disabled={saving} className="flex-1 px-4 py-2.5 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 disabled:opacity-50">
+                        <button type="submit" disabled={saving} className="flex-1 px-4 py-2.5 btn-primary disabled:opacity-50">
                             {saving ? 'Сохранение...' : 'Сохранить'}
                         </button>
                     </div>

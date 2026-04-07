@@ -101,7 +101,7 @@ function DevicesModal({ clientId, clientName, onClose }) {
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" onClick={onClose}>
-            <div className="bg-dark-800 border border-dark-700 rounded-xl w-full max-w-lg mx-4 max-h-[85vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+            <div className="glass-card w-full max-w-lg mx-4 max-h-[85vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
                 <div className="flex items-center justify-between p-5 border-b border-dark-700">
                     <div>
                         <h2 className="text-lg font-semibold text-white">Устройства</h2>
@@ -124,12 +124,12 @@ function DevicesModal({ clientId, clientName, onClose }) {
                                 min="0"
                                 value={limitInput}
                                 onChange={e => setLimitInput(e.target.value)}
-                                className="w-20 bg-dark-700 border border-dark-600 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-blue-500"
+                                className="w-20 bg-dark-700/50 border border-dark-600/80 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-accent-500"
                             />
                             <button
                                 onClick={handleSetLimit}
                                 disabled={saving || String(data?.device_limit || 0) === limitInput}
-                                className="px-3 py-1.5 bg-blue-600 text-white rounded-lg text-xs hover:bg-blue-700 disabled:opacity-50"
+                                className="px-3 py-1.5 btn-primary text-xs disabled:opacity-50"
                             >
                                 Сохранить
                             </button>
@@ -164,14 +164,14 @@ function DevicesModal({ clientId, clientName, onClose }) {
                                     >
                                         <div className="flex items-center justify-between">
                                             <div className="flex items-center gap-2">
-                                                <Smartphone className={`w-4 h-4 ${dev.is_revoked ? 'text-red-400' : 'text-blue-400'}`} />
+                                                <Smartphone className={`w-4 h-4 ${dev.is_revoked ? 'text-red-400' : 'text-accent-400'}`} />
                                                 <div>
                                                     <div className="flex items-center gap-2">
                                                         <span className="text-sm text-white">
                                                             {dev.device_name || DEVICE_TYPES[dev.device_type] || 'Unknown'}
                                                         </span>
                                                         {dev.app_name && dev.app_name !== 'unknown' && (
-                                                            <span className="px-1.5 py-0.5 bg-blue-500/20 rounded text-[10px] text-blue-300">
+                                                            <span className="px-1.5 py-0.5 bg-accent-500/20 rounded text-[10px] text-accent-300">
                                                                 {dev.app_name}
                                                             </span>
                                                         )}
@@ -262,7 +262,7 @@ function BulkMoveModal({ selectedIds, onClose, onDone }) {
 
     return (
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60" onClick={onClose}>
-            <div className="bg-dark-800 border border-dark-700 rounded-xl w-full max-w-sm mx-4" onClick={e => e.stopPropagation()}>
+            <div className="glass-card w-full max-w-sm mx-4" onClick={e => e.stopPropagation()}>
                 <div className="p-5 border-b border-dark-700">
                     <h2 className="text-lg font-semibold text-white">Переместить в группу</h2>
                     <p className="text-sm text-gray-400 mt-1">Выбрано клиентов: {selectedIds.size}</p>
@@ -273,7 +273,7 @@ function BulkMoveModal({ selectedIds, onClose, onDone }) {
                         <select
                             value={targetGroupId}
                             onChange={e => setTargetGroupId(e.target.value)}
-                            className="w-full bg-dark-700 border border-dark-600 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500"
+                            className="w-full bg-dark-700/50 border border-dark-600/80 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-accent-500"
                         >
                             <option value="">Выберите группу...</option>
                             {clientGroupList.map(g => (
@@ -297,7 +297,7 @@ function BulkMoveModal({ selectedIds, onClose, onDone }) {
                         <button
                             onClick={handleMove}
                             disabled={!targetGroupId || loading}
-                            className="flex-1 px-4 py-2.5 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 disabled:opacity-50"
+                            className="flex-1 px-4 py-2.5 btn-primary disabled:opacity-50"
                         >
                             {loading ? 'Перемещение...' : 'Переместить'}
                         </button>
@@ -545,7 +545,7 @@ export default function Clients() {
                 <h1 className="text-2xl font-bold text-white">VPN-клиенты</h1>
                 <button
                     onClick={() => setShowCreate(true)}
-                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
+                    className="flex items-center gap-2 px-4 py-2 btn-primary transition-colors"
                 >
                     <Plus className="w-4 h-4" />
                     Новый клиент
@@ -560,14 +560,14 @@ export default function Clients() {
                         type="text"
                         value={search}
                         onChange={e => { setSearch(e.target.value); setPage(1); }}
-                        className="w-full bg-dark-800 border border-dark-700 rounded-lg pl-10 pr-3 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+                        className="w-full bg-dark-800 border border-dark-700 rounded-lg pl-10 pr-3 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-accent-500"
                         placeholder="Поиск по имени, IP..."
                     />
                 </div>
                 <select
                     value={filter}
                     onChange={e => { setFilter(e.target.value); setPage(1); }}
-                    className="bg-dark-800 border border-dark-700 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500"
+                    className="bg-dark-800 border border-dark-700 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-accent-500"
                 >
                     <option value="">Все статусы</option>
                     <option value="active">Активные</option>
@@ -577,7 +577,7 @@ export default function Clients() {
                 <select
                     value={protoFilter}
                     onChange={e => { setProtoFilter(e.target.value); setPage(1); }}
-                    className="bg-dark-800 border border-dark-700 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500"
+                    className="bg-dark-800 border border-dark-700 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-accent-500"
                 >
                     <option value="">Все протоколы</option>
                     <option value="vless">VLESS</option>
@@ -586,7 +586,7 @@ export default function Clients() {
                     <select
                         value={groupFilter}
                         onChange={e => { setGroupFilter(e.target.value); setPage(1); }}
-                        className="bg-dark-800 border border-dark-700 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500"
+                        className="bg-dark-800 border border-dark-700 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-accent-500"
                     >
                         <option value="">Все группы</option>
                         <option value="none">Без группы</option>
@@ -611,7 +611,7 @@ export default function Clients() {
                         Удалить
                     </button>
                     {isAdmin && (
-                        <button onClick={() => setShowBulkMove(true)} className="px-3 py-1.5 bg-blue-600/20 text-blue-400 rounded-lg text-xs hover:bg-blue-600/30 flex items-center gap-1">
+                        <button onClick={() => setShowBulkMove(true)} className="px-3 py-1.5 bg-accent-500/15 text-accent-400 rounded-lg text-xs hover:bg-accent-500/25 flex items-center gap-1">
                             <ArrowRightLeft className="w-3 h-3" />
                             В группу
                         </button>
@@ -620,7 +620,7 @@ export default function Clients() {
             )}
 
             {/* Таблица клиентов */}
-            <div className="bg-dark-800 border border-dark-700 rounded-xl overflow-hidden">
+            <div className="glass-card overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                         <thead>
@@ -707,7 +707,7 @@ export default function Clients() {
                                                 <div className="text-xs">
                                                     <span className="text-green-400">↑{fmtBytes(g.upload_bytes)}</span>
                                                     {' / '}
-                                                    <span className="text-blue-400">↓{fmtBytes(g.download_bytes)}</span>
+                                                    <span className="text-accent-400">↓{fmtBytes(g.download_bytes)}</span>
                                                 </div>
                                             </td>
                                             <td className="p-3 text-xs text-gray-300 font-mono">
@@ -722,7 +722,7 @@ export default function Clients() {
                                                     className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs hover:bg-dark-700 transition-colors group"
                                                     title="Управление устройствами"
                                                 >
-                                                    <Smartphone className="w-3.5 h-3.5 text-gray-500 group-hover:text-blue-400" />
+                                                    <Smartphone className="w-3.5 h-3.5 text-gray-500 group-hover:text-accent-400" />
                                                     <span className={g.device_count > 0
                                                         ? (g.device_limit > 0 && g.device_count >= g.device_limit
                                                             ? 'text-red-400 font-medium'
@@ -740,7 +740,7 @@ export default function Clients() {
                                                 <div className="flex items-center justify-end gap-1">
                                                     <button
                                                         onClick={() => setQrGroup(g)}
-                                                        className="p-1.5 text-gray-400 hover:text-blue-400 rounded-lg hover:bg-dark-700"
+                                                        className="p-1.5 text-gray-400 hover:text-accent-400 rounded-lg hover:bg-dark-700"
                                                         title="QR-код / Share Link"
                                                     >
                                                         <QrCode className="w-4 h-4" />
@@ -776,7 +776,7 @@ export default function Clients() {
                                                     <div className="text-xs">
                                                         <span className="text-green-400/70">↑{fmtBytes(c.upload_bytes)}</span>
                                                         {' / '}
-                                                        <span className="text-blue-400/70">↓{fmtBytes(c.download_bytes)}</span>
+                                                        <span className="text-accent-400/70">↓{fmtBytes(c.download_bytes)}</span>
                                                     </div>
                                                 </td>
                                                 <td className="p-2 text-xs text-gray-400 font-mono">
@@ -786,7 +786,7 @@ export default function Clients() {
                                                 <td className="p-2">
                                                     <button
                                                         onClick={() => setQrGroup({ ...g, clients: [c] })}
-                                                        className="p-1 text-gray-500 hover:text-blue-400 rounded hover:bg-dark-700"
+                                                        className="p-1 text-gray-500 hover:text-accent-400 rounded hover:bg-dark-700"
                                                         title={`QR — ${c.protocol}`}
                                                     >
                                                         <QrCode className="w-3.5 h-3.5" />
@@ -814,7 +814,7 @@ export default function Clients() {
                                     onClick={() => setPage(p)}
                                     className={`px-3 py-1 text-xs rounded-md ${
                                         page === p
-                                            ? 'bg-blue-600 text-white'
+                                            ? 'bg-accent-500 text-white'
                                             : 'text-gray-400 hover:text-white hover:bg-dark-700'
                                     }`}
                                 >
@@ -831,7 +831,7 @@ export default function Clients() {
                 <>
                     <div className="fixed inset-0 z-40" onClick={() => setMenuGroup(null)} />
                     <div
-                        className="fixed z-50 w-48 bg-dark-700 border border-dark-600 rounded-lg shadow-xl py-1"
+                        className="fixed z-50 w-48 bg-dark-700/50 border border-dark-600/80 rounded-lg shadow-xl py-1"
                         style={{ top: menuPos.top, left: menuPos.left }}
                     >
                         <button

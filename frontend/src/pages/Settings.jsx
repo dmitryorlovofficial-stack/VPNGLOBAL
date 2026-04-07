@@ -295,7 +295,7 @@ export default function Settings() {
 
             {/* Общие настройки */}
             {tab === 'general' && (
-                <div className="bg-dark-800 border border-dark-700 rounded-xl p-5 space-y-4">
+                <div className="glass-card p-5 space-y-4">
                     <h3 className="text-sm font-semibold text-white">Настройки панели</h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
@@ -303,7 +303,7 @@ export default function Settings() {
                             <input
                                 value={config.panel_domain || ''}
                                 onChange={e => updateConfig('panel_domain', e.target.value)}
-                                className="w-full bg-dark-700 border border-dark-600 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500"
+                                className="w-full bg-dark-700/50 border border-dark-600/80 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-accent-500"
                                 placeholder="vpn.example.com"
                             />
                             <p className="text-[10px] text-gray-500 mt-1">Используется для формирования ссылок подписки</p>
@@ -313,12 +313,12 @@ export default function Settings() {
                             <input
                                 value={config.panel_name || ''}
                                 onChange={e => updateConfig('panel_name', e.target.value)}
-                                className="w-full bg-dark-700 border border-dark-600 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500"
+                                className="w-full bg-dark-700/50 border border-dark-600/80 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-accent-500"
                                 placeholder="VPN Panel"
                             />
                         </div>
                     </div>
-                    <button onClick={handleSaveGeneral} disabled={saving} className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50">
+                    <button onClick={handleSaveGeneral} disabled={saving} className="flex items-center gap-2 px-4 py-2.5 btn-primary disabled:opacity-50">
                         <Save className="w-4 h-4" /> {saving ? 'Сохранение...' : 'Сохранить'}
                     </button>
                 </div>
@@ -327,7 +327,7 @@ export default function Settings() {
             {/* Безопасность */}
             {tab === 'security' && (
                 <div className="space-y-4">
-                    <div className="bg-dark-800 border border-dark-700 rounded-xl p-5">
+                    <div className="glass-card p-5">
                         <h3 className="text-sm font-semibold text-white mb-4 flex items-center gap-2">
                             <Key className="w-4 h-4" /> Смена пароля
                         </h3>
@@ -337,29 +337,29 @@ export default function Settings() {
                                 value={passwordForm.oldPassword}
                                 onChange={e => setPasswordForm({ ...passwordForm, oldPassword: e.target.value })}
                                 placeholder="Текущий пароль"
-                                className="w-full bg-dark-700 border border-dark-600 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+                                className="w-full bg-dark-700/50 border border-dark-600/80 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-accent-500"
                             />
                             <input
                                 type="password"
                                 value={passwordForm.newPassword}
                                 onChange={e => setPasswordForm({ ...passwordForm, newPassword: e.target.value })}
                                 placeholder="Новый пароль"
-                                className="w-full bg-dark-700 border border-dark-600 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+                                className="w-full bg-dark-700/50 border border-dark-600/80 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-accent-500"
                             />
                             <input
                                 type="password"
                                 value={passwordForm.confirm}
                                 onChange={e => setPasswordForm({ ...passwordForm, confirm: e.target.value })}
                                 placeholder="Подтверждение нового пароля"
-                                className="w-full bg-dark-700 border border-dark-600 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+                                className="w-full bg-dark-700/50 border border-dark-600/80 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-accent-500"
                             />
-                            <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700">
+                            <button type="submit" className="px-4 py-2 btn-primary">
                                 Сменить пароль
                             </button>
                         </form>
                     </div>
 
-                    <div className="bg-dark-800 border border-dark-700 rounded-xl p-5">
+                    <div className="glass-card p-5">
                         <h3 className="text-sm font-semibold text-white mb-3">Безопасность панели</h3>
                         <div className="space-y-3 max-w-sm">
                             <div>
@@ -368,7 +368,7 @@ export default function Settings() {
                                     value={config.ip_whitelist || ''}
                                     onChange={e => updateConfig('ip_whitelist', e.target.value)}
                                     placeholder="Оставьте пустым для доступа отовсюду"
-                                    className="w-full bg-dark-700 border border-dark-600 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+                                    className="w-full bg-dark-700/50 border border-dark-600/80 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-accent-500"
                                 />
                             </div>
                             <div>
@@ -377,10 +377,10 @@ export default function Settings() {
                                     type="number"
                                     value={config.max_login_attempts || '5'}
                                     onChange={e => updateConfig('max_login_attempts', e.target.value)}
-                                    className="w-full bg-dark-700 border border-dark-600 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500"
+                                    className="w-full bg-dark-700/50 border border-dark-600/80 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-accent-500"
                                 />
                             </div>
-                            <button onClick={handleSaveGeneral} className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700">
+                            <button onClick={handleSaveGeneral} className="px-4 py-2 btn-primary">
                                 Сохранить
                             </button>
                         </div>
@@ -392,7 +392,7 @@ export default function Settings() {
             {tab === 'ssl' && (
                 <div className="space-y-4">
                     {/* Статус SSL */}
-                    <div className="bg-dark-800 border border-dark-700 rounded-xl p-5">
+                    <div className="glass-card p-5">
                         <h3 className="text-sm font-semibold text-white mb-3 flex items-center gap-2">
                             <Lock className="w-4 h-4" /> HTTPS (Let's Encrypt)
                             {sslStatus?.enabled ? (
@@ -410,7 +410,7 @@ export default function Settings() {
                         {sslStatus?.hasCert && (
                             <div className="mb-4 p-3 rounded-lg bg-dark-700/50 border border-dark-600 space-y-1">
                                 <div className="flex items-center gap-2 text-sm text-white">
-                                    <Globe className="w-4 h-4 text-blue-400" />
+                                    <Globe className="w-4 h-4 text-accent-400" />
                                     <span className="font-mono">{sslStatus.domain}</span>
                                 </div>
                                 <div className="flex items-center gap-4 text-xs text-gray-400">
@@ -431,7 +431,7 @@ export default function Settings() {
                                     onChange={e => setSslDomain(e.target.value.trim())}
                                     placeholder="example.com"
                                     disabled={sslObtaining}
-                                    className="w-full bg-dark-700 border border-dark-600 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 font-mono disabled:opacity-50"
+                                    className="w-full bg-dark-700/50 border border-dark-600/80 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-accent-500 font-mono disabled:opacity-50"
                                 />
                                 <p className="text-xs text-gray-600 mt-1">A-запись домена должна указывать на IP этого сервера</p>
                             </div>
@@ -442,13 +442,13 @@ export default function Settings() {
                                     onChange={e => setSslEmail(e.target.value.trim())}
                                     placeholder="admin@example.com"
                                     disabled={sslObtaining}
-                                    className="w-full bg-dark-700 border border-dark-600 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 disabled:opacity-50"
+                                    className="w-full bg-dark-700/50 border border-dark-600/80 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-accent-500 disabled:opacity-50"
                                 />
                                 <p className="text-xs text-gray-600 mt-1">Let's Encrypt отправит уведомление перед истечением</p>
                             </div>
 
                             {sslObtaining && (
-                                <div className="flex items-center gap-2 p-3 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-400 text-sm">
+                                <div className="flex items-center gap-2 p-3 rounded-lg bg-accent-500/10 border border-accent-500/20 text-accent-400 text-sm">
                                     <RefreshCw className="w-4 h-4 animate-spin" />
                                     <span>Получение сертификата... Панель будет недоступна ~30 сек</span>
                                 </div>
@@ -458,7 +458,7 @@ export default function Settings() {
                                 <button
                                     onClick={handleSslObtain}
                                     disabled={sslObtaining || !sslDomain}
-                                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50"
+                                    className="flex items-center gap-2 px-4 py-2 btn-primary disabled:opacity-50"
                                 >
                                     <Lock className="w-4 h-4" />
                                     {sslObtaining ? 'Получение...' : sslStatus?.hasCert ? 'Переиздать' : 'Получить сертификат'}
@@ -489,7 +489,7 @@ export default function Settings() {
                     </div>
 
                     {/* Подсказка */}
-                    <div className="bg-dark-800 border border-dark-700 rounded-xl p-5">
+                    <div className="glass-card p-5">
                         <h3 className="text-sm font-semibold text-white mb-2 flex items-center gap-2">
                             <AlertTriangle className="w-4 h-4 text-yellow-400" /> Требования
                         </h3>
@@ -508,7 +508,7 @@ export default function Settings() {
             {tab === 'telegram' && (
                 <div className="space-y-4">
                     {/* Настройки бота */}
-                    <div className="bg-dark-800 border border-dark-700 rounded-xl p-5">
+                    <div className="glass-card p-5">
                         <h3 className="text-sm font-semibold text-white mb-3 flex items-center gap-2">
                             <Send className="w-4 h-4" /> Telegram бот
                             {tgConfig.enabled ? (
@@ -529,7 +529,7 @@ export default function Settings() {
                                     value={config.telegram_bot_token || ''}
                                     onChange={e => updateConfig('telegram_bot_token', e.target.value)}
                                     placeholder="123456:ABC-DEF..."
-                                    className="w-full bg-dark-700 border border-dark-600 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 font-mono"
+                                    className="w-full bg-dark-700/50 border border-dark-600/80 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-accent-500 font-mono"
                                 />
                                 <p className="text-xs text-gray-600 mt-1">Получите у @BotFather в Telegram</p>
                             </div>
@@ -541,11 +541,11 @@ export default function Settings() {
                                         value={config.telegram_bot_username || ''}
                                         onChange={e => updateConfig('telegram_bot_username', e.target.value)}
                                         placeholder="my_vpn_bot"
-                                        className="flex-1 bg-dark-700 border border-dark-600 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+                                        className="flex-1 bg-dark-700/50 border border-dark-600/80 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-accent-500"
                                     />
                                 </div>
                             </div>
-                            <button onClick={handleSaveTelegram} disabled={saving} className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50">
+                            <button onClick={handleSaveTelegram} disabled={saving} className="flex items-center gap-2 px-4 py-2 btn-primary disabled:opacity-50">
                                 <Save className="w-4 h-4" /> {saving ? 'Сохранение...' : 'Сохранить'}
                             </button>
                         </div>
@@ -553,7 +553,7 @@ export default function Settings() {
 
                     {/* Привязка Telegram к текущему аккаунту */}
                     {tgConfig.enabled && (
-                        <div className="bg-dark-800 border border-dark-700 rounded-xl p-5">
+                        <div className="glass-card p-5">
                             <h3 className="text-sm font-semibold text-white mb-3">Ваш аккаунт</h3>
                             {userInfo?.telegram_id ? (
                                 <div className="flex items-center gap-3">
@@ -580,7 +580,7 @@ export default function Settings() {
                     )}
 
                     {/* Управление инвайтами */}
-                    <div className="bg-dark-800 border border-dark-700 rounded-xl p-5">
+                    <div className="glass-card p-5">
                         <h3 className="text-sm font-semibold text-white mb-4">Инвайт-коды</h3>
 
                         {/* Форма создания */}
@@ -591,7 +591,7 @@ export default function Settings() {
                                     type="number"
                                     value={inviteForm.max_uses}
                                     onChange={e => setInviteForm({ ...inviteForm, max_uses: e.target.value })}
-                                    className="w-full bg-dark-700 border border-dark-600 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500"
+                                    className="w-full bg-dark-700/50 border border-dark-600/80 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-accent-500"
                                     min="1"
                                 />
                             </div>
@@ -601,7 +601,7 @@ export default function Settings() {
                                     type="number"
                                     value={inviteForm.max_vpn_clients}
                                     onChange={e => setInviteForm({ ...inviteForm, max_vpn_clients: e.target.value })}
-                                    className="w-full bg-dark-700 border border-dark-600 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500"
+                                    className="w-full bg-dark-700/50 border border-dark-600/80 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-accent-500"
                                     min="1"
                                 />
                             </div>
@@ -611,7 +611,7 @@ export default function Settings() {
                                     type="number"
                                     value={inviteForm.expires_hours}
                                     onChange={e => setInviteForm({ ...inviteForm, expires_hours: e.target.value })}
-                                    className="w-full bg-dark-700 border border-dark-600 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+                                    className="w-full bg-dark-700/50 border border-dark-600/80 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-accent-500"
                                     placeholder="Без срока"
                                     min="1"
                                 />
@@ -620,7 +620,7 @@ export default function Settings() {
                                 <button
                                     onClick={handleCreateInvite}
                                     disabled={creatingInvite}
-                                    className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 disabled:opacity-50"
+                                    className="w-full flex items-center justify-center gap-2 px-3 py-2 btn-primary disabled:opacity-50"
                                 >
                                     <Plus className="w-4 h-4" />
                                     {creatingInvite ? '...' : 'Создать'}
@@ -640,7 +640,7 @@ export default function Settings() {
 
                                     return (
                                         <div key={inv.id} className={`flex items-center gap-3 p-3 rounded-lg border ${inactive ? 'bg-dark-900/50 border-dark-700/50' : 'bg-dark-700/50 border-dark-600'}`}>
-                                            <code className={`text-sm font-mono ${inactive ? 'text-gray-600' : 'text-blue-400'}`}>
+                                            <code className={`text-sm font-mono ${inactive ? 'text-gray-600' : 'text-accent-400'}`}>
                                                 {inv.code}
                                             </code>
 
@@ -663,7 +663,7 @@ export default function Settings() {
                                             </button>
                                             <button
                                                 onClick={() => copyInviteLink(inv.code)}
-                                                className="p-1.5 text-gray-400 hover:text-blue-400 transition-colors"
+                                                className="p-1.5 text-gray-400 hover:text-accent-400 transition-colors"
                                                 title="Копировать ссылку"
                                             >
                                                 <Send className="w-3.5 h-3.5" />
@@ -688,7 +688,7 @@ export default function Settings() {
 
 
             {tab === 'yoomoney' && (
-                <div className="bg-dark-800 border border-dark-700 rounded-xl p-6 space-y-4">
+                <div className="glass-card p-6 space-y-4">
                     <h2 className="text-lg font-semibold text-white">ЮMoney</h2>
                     <p className="text-xs text-gray-400">Приём платежей через кошелёк ЮMoney</p>
 
@@ -698,7 +698,7 @@ export default function Settings() {
                             <input
                                 value={yooConfig.yoomoney_wallet}
                                 onChange={e => setYooConfig(p => ({ ...p, yoomoney_wallet: e.target.value }))}
-                                className="w-full bg-dark-700 border border-dark-600 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500"
+                                className="w-full bg-dark-700/50 border border-dark-600/80 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-accent-500"
                                 placeholder="4100123456789"
                             />
                         </div>
@@ -708,14 +708,14 @@ export default function Settings() {
                                 type="password"
                                 value={yooConfig.yoomoney_secret}
                                 onChange={e => setYooConfig(p => ({ ...p, yoomoney_secret: e.target.value }))}
-                                className="w-full bg-dark-700 border border-dark-600 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500"
+                                className="w-full bg-dark-700/50 border border-dark-600/80 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-accent-500"
                                 placeholder="Секрет из настроек ЮMoney"
                             />
                             <p className="text-[10px] text-gray-500 mt-1">ЮMoney → Настройки → HTTP-уведомления → Секрет</p>
                         </div>
                         <div className="bg-dark-700/50 rounded-lg p-3 text-xs text-gray-400 space-y-1">
                             <p className="font-medium text-gray-300">URL для уведомлений (вставьте в ЮMoney):</p>
-                            <code className="block bg-dark-900 px-2 py-1 rounded text-blue-300 break-all">
+                            <code className="block bg-dark-900 px-2 py-1 rounded text-accent-300 break-all">
                                 {window.location.origin}/api/payments/yoomoney-webhook
                             </code>
                         </div>
@@ -731,7 +731,7 @@ export default function Settings() {
                             finally { setSaving(false); }
                         }}
                         disabled={saving}
-                        className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 disabled:opacity-50 flex items-center gap-2"
+                        className="px-4 py-2 btn-primary disabled:opacity-50 flex items-center gap-2"
                     >
                         <Save className="w-4 h-4" /> Сохранить
                     </button>
@@ -739,7 +739,7 @@ export default function Settings() {
             )}
 
             {tab === 'smtp' && (
-                <div className="bg-dark-800 border border-dark-700 rounded-xl p-6 space-y-4">
+                <div className="glass-card p-6 space-y-4">
                     <h2 className="text-lg font-semibold text-white">SMTP настройки</h2>
                     <p className="text-xs text-gray-400">Для отправки кодов авторизации пользователям через email</p>
 
@@ -749,7 +749,7 @@ export default function Settings() {
                             <input
                                 value={smtpConfig.smtp_host}
                                 onChange={e => setSmtpConfig(p => ({ ...p, smtp_host: e.target.value }))}
-                                className="w-full bg-dark-700 border border-dark-600 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500"
+                                className="w-full bg-dark-700/50 border border-dark-600/80 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-accent-500"
                                 placeholder="smtp.gmail.com"
                             />
                         </div>
@@ -758,7 +758,7 @@ export default function Settings() {
                             <input
                                 value={smtpConfig.smtp_port}
                                 onChange={e => setSmtpConfig(p => ({ ...p, smtp_port: e.target.value }))}
-                                className="w-full bg-dark-700 border border-dark-600 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500"
+                                className="w-full bg-dark-700/50 border border-dark-600/80 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-accent-500"
                                 placeholder="587"
                             />
                         </div>
@@ -767,7 +767,7 @@ export default function Settings() {
                             <input
                                 value={smtpConfig.smtp_user}
                                 onChange={e => setSmtpConfig(p => ({ ...p, smtp_user: e.target.value }))}
-                                className="w-full bg-dark-700 border border-dark-600 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500"
+                                className="w-full bg-dark-700/50 border border-dark-600/80 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-accent-500"
                                 placeholder="user@gmail.com"
                             />
                         </div>
@@ -777,7 +777,7 @@ export default function Settings() {
                                 type="password"
                                 value={smtpConfig.smtp_pass}
                                 onChange={e => setSmtpConfig(p => ({ ...p, smtp_pass: e.target.value }))}
-                                className="w-full bg-dark-700 border border-dark-600 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500"
+                                className="w-full bg-dark-700/50 border border-dark-600/80 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-accent-500"
                                 placeholder="••••••••"
                             />
                         </div>
@@ -786,7 +786,7 @@ export default function Settings() {
                             <input
                                 value={smtpConfig.smtp_from}
                                 onChange={e => setSmtpConfig(p => ({ ...p, smtp_from: e.target.value }))}
-                                className="w-full bg-dark-700 border border-dark-600 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500"
+                                className="w-full bg-dark-700/50 border border-dark-600/80 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-accent-500"
                                 placeholder="VPN Panel <noreply@example.com>"
                             />
                         </div>
@@ -803,7 +803,7 @@ export default function Settings() {
                                 finally { setSaving(false); }
                             }}
                             disabled={saving}
-                            className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 disabled:opacity-50 flex items-center gap-2"
+                            className="px-4 py-2 btn-primary disabled:opacity-50 flex items-center gap-2"
                         >
                             <Save className="w-4 h-4" /> Сохранить
                         </button>
@@ -838,7 +838,7 @@ export default function Settings() {
                                 type="email"
                                 value={smtpTestEmail}
                                 onChange={e => setSmtpTestEmail(e.target.value)}
-                                className="flex-1 bg-dark-700 border border-dark-600 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500"
+                                className="flex-1 bg-dark-700/50 border border-dark-600/80 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-accent-500"
                                 placeholder="test@example.com"
                             />
                             <button
@@ -874,7 +874,7 @@ export default function Settings() {
             )}
 
             {tab === 'backup' && (
-                <div className="bg-dark-800 border border-dark-700 rounded-xl p-5">
+                <div className="glass-card p-5">
                     <h3 className="text-sm font-semibold text-white mb-4">Резервное копирование</h3>
                     <div className="space-y-4">
                         <div className="flex flex-col sm:flex-row gap-3">

@@ -160,7 +160,7 @@ function ServerCard({ server, onRefresh, onEdit, onDelete }) {
     ];
 
     return (
-        <div className="bg-dark-800 border border-dark-700 rounded-xl overflow-hidden">
+        <div className="glass-card overflow-hidden">
             {/* Заголовок */}
             <div className="flex items-center justify-between p-4 cursor-pointer hover:bg-dark-750" onClick={() => setExpanded(!expanded)}>
                 <div className="flex items-center gap-3">
@@ -201,7 +201,7 @@ function ServerCard({ server, onRefresh, onEdit, onDelete }) {
                             <button key={t.id} onClick={() => setTab(t.id)}
                                 className={`flex items-center gap-1.5 px-3 py-2.5 text-xs font-medium border-b-2 transition-colors ${
                                     tab === t.id
-                                        ? 'border-blue-500 text-blue-400'
+                                        ? 'border-accent-500 text-accent-400'
                                         : 'border-transparent text-gray-500 hover:text-gray-300'
                                 }`}>
                                 <t.icon className="w-3.5 h-3.5" />
@@ -265,7 +265,7 @@ function ServerCard({ server, onRefresh, onEdit, onDelete }) {
                                                 value={upstreamDns}
                                                 onChange={e => setUpstreamDns(e.target.value)}
                                                 rows={4}
-                                                className="w-full bg-dark-900 border border-dark-600 rounded-lg px-3 py-2 text-sm text-white font-mono focus:outline-none focus:border-blue-500/50 resize-y"
+                                                className="w-full bg-dark-900 border border-dark-600 rounded-lg px-3 py-2 text-sm text-white font-mono focus:outline-none focus:border-accent-500/50 resize-y"
                                                 placeholder="https://dns.cloudflare.com/dns-query&#10;https://dns.google/dns-query"
                                             />
                                             <p className="text-[10px] text-gray-500 mt-1">По одному на строку. Поддерживаются: IP, DoH, DoT, DoQ</p>
@@ -276,7 +276,7 @@ function ServerCard({ server, onRefresh, onEdit, onDelete }) {
                                                 value={bootstrapDns}
                                                 onChange={e => setBootstrapDns(e.target.value)}
                                                 rows={2}
-                                                className="w-full bg-dark-900 border border-dark-600 rounded-lg px-3 py-2 text-sm text-white font-mono focus:outline-none focus:border-blue-500/50 resize-y"
+                                                className="w-full bg-dark-900 border border-dark-600 rounded-lg px-3 py-2 text-sm text-white font-mono focus:outline-none focus:border-accent-500/50 resize-y"
                                                 placeholder="9.9.9.10&#10;149.112.112.10"
                                             />
                                         </div>
@@ -297,7 +297,7 @@ function ServerCard({ server, onRefresh, onEdit, onDelete }) {
                                             </div>
                                         </div>
                                         <button onClick={handleSaveDns} disabled={actionLoading === 'dns-save'}
-                                            className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50">
+                                            className="px-4 py-2 btn-primary disabled:opacity-50">
                                             {actionLoading === 'dns-save' ? <Loader2 className="w-4 h-4 animate-spin inline mr-1" /> : null}
                                             Сохранить DNS
                                         </button>
@@ -326,7 +326,7 @@ function ServerCard({ server, onRefresh, onEdit, onDelete }) {
                                                     Обновить
                                                 </button>
                                                 <button onClick={() => setShowAddFilter(true)}
-                                                    className="text-[11px] px-2 py-1 bg-blue-600/20 text-blue-400 rounded hover:bg-blue-600/30">
+                                                    className="text-[11px] px-2 py-1 bg-accent-500/15 text-accent-400 rounded hover:bg-accent-500/25">
                                                     <Plus className="w-3 h-3 inline mr-0.5" /> Добавить
                                                 </button>
                                             </div>
@@ -368,21 +368,21 @@ function ServerCard({ server, onRefresh, onEdit, onDelete }) {
                                                     type="text"
                                                     value={filterName}
                                                     onChange={e => setFilterName(e.target.value)}
-                                                    className="w-full bg-dark-800 border border-dark-600 rounded px-2.5 py-1.5 text-sm text-white focus:outline-none focus:border-blue-500/50"
+                                                    className="w-full bg-dark-800 border border-dark-600 rounded px-2.5 py-1.5 text-sm text-white focus:outline-none focus:border-accent-500/50"
                                                     placeholder="Название (опционально)"
                                                 />
                                                 <input
                                                     type="text"
                                                     value={filterUrl}
                                                     onChange={e => setFilterUrl(e.target.value)}
-                                                    className="w-full bg-dark-800 border border-dark-600 rounded px-2.5 py-1.5 text-sm text-white focus:outline-none focus:border-blue-500/50"
+                                                    className="w-full bg-dark-800 border border-dark-600 rounded px-2.5 py-1.5 text-sm text-white focus:outline-none focus:border-accent-500/50"
                                                     placeholder="URL фильтр-листа"
                                                 />
                                                 <div className="flex justify-end gap-2">
                                                     <button onClick={() => setShowAddFilter(false)}
                                                         className="text-xs px-3 py-1.5 bg-dark-700 text-gray-300 rounded hover:bg-dark-600">Отмена</button>
                                                     <button onClick={handleAddFilter} disabled={actionLoading === 'add-filter'}
-                                                        className="text-xs px-3 py-1.5 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50">
+                                                        className="text-xs px-3 py-1.5 bg-accent-500 text-white rounded hover:bg-accent-600 disabled:opacity-50">
                                                         {actionLoading === 'add-filter' ? <Loader2 className="w-3 h-3 animate-spin inline" /> : 'Добавить'}
                                                     </button>
                                                 </div>
@@ -413,7 +413,7 @@ function ServerCard({ server, onRefresh, onEdit, onDelete }) {
                                             </div>
                                             <div className="bg-dark-900 rounded-lg p-3">
                                                 <div className="text-[10px] text-gray-500 uppercase">Среднее время</div>
-                                                <div className="text-lg font-bold text-blue-400">
+                                                <div className="text-lg font-bold text-accent-400">
                                                     {stats.avg_processing_time
                                                         ? (stats.avg_processing_time * 1000).toFixed(1) + ' мс'
                                                         : 'N/A'}
@@ -599,7 +599,7 @@ export default function AdGuard() {
             {/* Модалка добавления/редактирования */}
             {showModal && (
                 <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4" onClick={() => setShowModal(false)}>
-                    <div className="bg-dark-800 border border-dark-700 rounded-xl w-full max-w-md" onClick={e => e.stopPropagation()}>
+                    <div className="glass-card w-full max-w-md" onClick={e => e.stopPropagation()}>
                         <div className="p-5 border-b border-dark-700 flex items-center justify-between">
                             <h3 className="text-lg font-semibold text-white">
                                 {editingServer ? 'Редактировать сервер' : 'Добавить AdGuard Home'}
@@ -613,7 +613,7 @@ export default function AdGuard() {
                                     type="text"
                                     value={form.name}
                                     onChange={e => setForm({ ...form, name: e.target.value })}
-                                    className="w-full bg-dark-900 border border-dark-600 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500"
+                                    className="w-full bg-dark-900 border border-dark-600 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-accent-500"
                                     placeholder="Home DNS"
                                 />
                             </div>
@@ -623,7 +623,7 @@ export default function AdGuard() {
                                     type="text"
                                     value={form.url}
                                     onChange={e => setForm({ ...form, url: e.target.value })}
-                                    className="w-full bg-dark-900 border border-dark-600 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500"
+                                    className="w-full bg-dark-900 border border-dark-600 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-accent-500"
                                     placeholder="http://192.168.1.1:3000"
                                 />
                                 <p className="text-[10px] text-gray-500 mt-1">IP или домен с портом (обычно 3000 или 80)</p>
@@ -635,7 +635,7 @@ export default function AdGuard() {
                                         type="text"
                                         value={form.username}
                                         onChange={e => setForm({ ...form, username: e.target.value })}
-                                        className="w-full bg-dark-900 border border-dark-600 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500"
+                                        className="w-full bg-dark-900 border border-dark-600 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-accent-500"
                                         placeholder="admin"
                                     />
                                 </div>
@@ -647,7 +647,7 @@ export default function AdGuard() {
                                         type="password"
                                         value={form.password}
                                         onChange={e => setForm({ ...form, password: e.target.value })}
-                                        className="w-full bg-dark-900 border border-dark-600 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500"
+                                        className="w-full bg-dark-900 border border-dark-600 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-accent-500"
                                         placeholder="••••••"
                                     />
                                 </div>

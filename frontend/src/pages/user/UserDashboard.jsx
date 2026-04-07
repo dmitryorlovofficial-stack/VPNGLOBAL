@@ -142,7 +142,7 @@ export default function UserDashboard({ user, onLogout }) {
                 onClick={() => handleNavClick(item.id)}
                 className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
                   active
-                    ? 'bg-blue-600/20 text-blue-400'
+                    ? 'bg-accent-500/15 text-accent-400'
                     : 'text-gray-400 hover:text-white hover:bg-dark-700'
                 }`}
               >
@@ -258,7 +258,7 @@ function ProfileTab({ data, onBuy }) {
             )}
             <button
               onClick={onBuy}
-              className="w-full mt-2 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-xl transition-colors text-sm"
+              className="w-full mt-2 bg-gradient-to-r from-accent-500 to-accent-600 hover:shadow-glow-sm text-white font-medium py-2.5 rounded-xl transition-colors text-sm"
             >
               Продлить подписку
             </button>
@@ -270,7 +270,7 @@ function ProfileTab({ data, onBuy }) {
             </p>
             <button
               onClick={onBuy}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-xl transition-colors text-sm"
+              className="w-full bg-gradient-to-r from-accent-500 to-accent-600 hover:shadow-glow-sm text-white font-medium py-2.5 rounded-xl transition-colors text-sm"
             >
               Выбрать тариф
             </button>
@@ -325,7 +325,7 @@ function ConnectTab({ data }) {
               onClick={() => setSelectedDevice(key)}
               className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium whitespace-nowrap transition-colors ${
                 active
-                  ? 'bg-blue-600 text-white'
+                  ? 'bg-accent-500 text-white'
                   : 'bg-dark-800 text-gray-400 hover:text-white border border-dark-700'
               }`}
             >
@@ -349,7 +349,7 @@ function ConnectTab({ data }) {
                 href={app.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1 text-blue-400 hover:text-blue-300 text-sm transition-colors"
+                className="flex items-center gap-1 text-accent-400 hover:text-accent-300 text-sm transition-colors"
               >
                 Установить
                 <ExternalLink className="w-3.5 h-3.5" />
@@ -605,7 +605,7 @@ function PurchaseModal({ email, onClose }) {
                 <button
                   onClick={() => handlePurchase(tariff)}
                   disabled={purchasing === tariff.id}
-                  className="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-medium py-2.5 rounded-xl transition-colors text-sm flex items-center justify-center gap-2"
+                  className="w-full bg-gradient-to-r from-accent-500 to-accent-600 hover:shadow-glow-sm disabled:opacity-50 text-white font-medium py-2.5 rounded-xl transition-colors text-sm flex items-center justify-center gap-2"
                 >
                   {purchasing === tariff.id ? (
                     <Loader2 className="w-4 h-4 animate-spin" />

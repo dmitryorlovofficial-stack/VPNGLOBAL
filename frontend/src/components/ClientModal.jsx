@@ -125,7 +125,7 @@ export default function ClientModal({ client, onClose, onSaved }) {
     };
 
     const isXray = XRAY_PROTOCOLS.includes(form.protocol);
-    const inputClass = 'w-full bg-dark-700 border border-dark-600 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-500';
+    const inputClass = 'w-full bg-dark-700/50 border border-dark-600/80 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-accent-500';
 
     // Фильтруем inbounds по выбранному протоколу и группируем по серверу
     const filteredInbounds = isXray
@@ -180,7 +180,7 @@ export default function ClientModal({ client, onClose, onSaved }) {
                                     onClick={() => setCreateMode('manual')}
                                     className={`px-2 py-2 rounded-lg text-xs font-medium transition-colors border ${
                                         createMode === 'manual'
-                                            ? 'bg-blue-600/20 border-blue-500 text-blue-400'
+                                            ? 'bg-accent-500/15 border-accent-500 text-accent-400'
                                             : 'bg-dark-700 border-dark-600 text-gray-400 hover:border-dark-500'
                                     }`}
                                 >
@@ -316,7 +316,7 @@ export default function ClientModal({ client, onClose, onSaved }) {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="flex-1 px-4 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors disabled:opacity-50"
+                            className="flex-1 px-4 py-2.5 btn-primary transition-colors disabled:opacity-50"
                         >
                             {loading ? 'Создание...' : isEdit ? 'Сохранить' : 'Создать'}
                         </button>

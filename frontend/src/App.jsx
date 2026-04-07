@@ -39,7 +39,7 @@ function AppLayout({ children, onLogout, user }) {
             <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} onLogout={onLogout} user={user} />
             <div className="flex-1 flex flex-col overflow-hidden">
                 {/* Мобильная шапка */}
-                <header className="lg:hidden flex items-center justify-between p-4 bg-dark-800 border-b border-dark-700">
+                <header className="lg:hidden flex items-center justify-between p-4 bg-dark-800/80 backdrop-blur-md border-b border-dark-700/50">
                     <button onClick={() => setSidebarOpen(true)} className="text-gray-300 hover:text-white">
                         <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />

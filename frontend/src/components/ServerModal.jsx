@@ -114,7 +114,7 @@ export default function ServerModal({ server, onClose, onSaved }) {
                             type="text"
                             value={form.name}
                             onChange={e => set('name', e.target.value)}
-                            className="w-full bg-dark-700 border border-dark-600 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+                            className="w-full bg-dark-700/50 border border-dark-600/80 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-accent-500"
                             placeholder="DE-1"
                         />
                     </div>
@@ -125,7 +125,7 @@ export default function ServerModal({ server, onClose, onSaved }) {
                             type="text"
                             value={form.description}
                             onChange={e => set('description', e.target.value)}
-                            className="w-full bg-dark-700 border border-dark-600 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+                            className="w-full bg-dark-700/50 border border-dark-600/80 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-accent-500"
                             placeholder="Hetzner, Falkenstein, DE"
                         />
                     </div>
@@ -140,7 +140,7 @@ export default function ServerModal({ server, onClose, onSaved }) {
                                     type="text"
                                     value={form.host}
                                     onChange={e => set('host', e.target.value)}
-                                    className="w-full bg-dark-700 border border-dark-600 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+                                    className="w-full bg-dark-700/50 border border-dark-600/80 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-accent-500"
                                     placeholder="185.123.45.67"
                                 />
                             </div>
@@ -150,7 +150,7 @@ export default function ServerModal({ server, onClose, onSaved }) {
                                     type="number"
                                     value={form.ssh_port}
                                     onChange={e => set('ssh_port', parseInt(e.target.value) || 22)}
-                                    className="w-full bg-dark-700 border border-dark-600 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500"
+                                    className="w-full bg-dark-700/50 border border-dark-600/80 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-accent-500"
                                 />
                             </div>
                         </div>
@@ -161,7 +161,7 @@ export default function ServerModal({ server, onClose, onSaved }) {
                                     type="text"
                                     value={form.domain}
                                     onChange={e => set('domain', e.target.value)}
-                                    className="w-full bg-dark-700 border border-dark-600 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+                                    className="w-full bg-dark-700/50 border border-dark-600/80 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-accent-500"
                                     placeholder="vpn.example.com"
                                 />
                             </div>
@@ -178,7 +178,7 @@ export default function ServerModal({ server, onClose, onSaved }) {
                                     type="text"
                                     value={form.ssh_user}
                                     onChange={e => set('ssh_user', e.target.value)}
-                                    className="w-full bg-dark-700 border border-dark-600 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500"
+                                    className="w-full bg-dark-700/50 border border-dark-600/80 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-accent-500"
                                 />
                             </div>
                             <div>
@@ -186,7 +186,7 @@ export default function ServerModal({ server, onClose, onSaved }) {
                                 <select
                                     value={form.ssh_auth_type}
                                     onChange={e => set('ssh_auth_type', e.target.value)}
-                                    className="w-full bg-dark-700 border border-dark-600 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500"
+                                    className="w-full bg-dark-700/50 border border-dark-600/80 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-accent-500"
                                 >
                                     {AUTH_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
                                 </select>
@@ -202,7 +202,7 @@ export default function ServerModal({ server, onClose, onSaved }) {
                                     type="password"
                                     value={form.ssh_password}
                                     onChange={e => set('ssh_password', e.target.value)}
-                                    className="w-full bg-dark-700 border border-dark-600 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+                                    className="w-full bg-dark-700/50 border border-dark-600/80 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-accent-500"
                                     placeholder="••••••••"
                                 />
                             </div>
@@ -212,7 +212,7 @@ export default function ServerModal({ server, onClose, onSaved }) {
                                 <textarea
                                     value={form.ssh_key}
                                     onChange={e => set('ssh_key', e.target.value)}
-                                    className="w-full bg-dark-700 border border-dark-600 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 font-mono resize-none"
+                                    className="w-full bg-dark-700/50 border border-dark-600/80 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-accent-500 font-mono resize-none"
                                     rows={4}
                                     placeholder="-----BEGIN OPENSSH PRIVATE KEY-----"
                                 />
@@ -221,7 +221,7 @@ export default function ServerModal({ server, onClose, onSaved }) {
                                     type="password"
                                     value={form.ssh_key_passphrase}
                                     onChange={e => set("ssh_key_passphrase", e.target.value)}
-                                    className="w-full bg-dark-700 border border-dark-600 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+                                    className="w-full bg-dark-700/50 border border-dark-600/80 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-accent-500"
                                     placeholder="Оставьте пустым если ключ без пароля"
                                 />
                             </div>
@@ -260,7 +260,7 @@ export default function ServerModal({ server, onClose, onSaved }) {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="px-4 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors disabled:opacity-50"
+                            className="px-4 py-2.5 btn-primary transition-colors disabled:opacity-50"
                         >
                             {loading ? 'Сохранение...' : isEdit ? 'Сохранить' : 'Добавить'}
                         </button>

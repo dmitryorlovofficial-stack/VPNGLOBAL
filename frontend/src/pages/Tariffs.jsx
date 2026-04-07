@@ -54,26 +54,26 @@ export default function Tariffs() {
         <div className="space-y-6 animate-fade-in">
             <h1 className="text-2xl font-bold text-white">Тарифы</h1>
 
-            <div className="bg-dark-800 border border-dark-700 rounded-xl p-5 space-y-4">
+            <div className="glass-card p-5 space-y-4">
                 <h3 className="text-sm font-semibold text-white">{editId ? 'Редактировать тариф' : 'Новый тариф'}</h3>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                     <input value={form.name} onChange={e => setForm({...form, name: e.target.value})}
-                        className="bg-dark-700 border border-dark-600 rounded-lg px-3 py-2 text-sm text-white" placeholder="Название" />
+                        className="bg-dark-700/50 border border-dark-600/80 rounded-lg px-3 py-2 text-sm text-white" placeholder="Название" />
                     <input type="number" value={form.duration_days} onChange={e => setForm({...form, duration_days: parseInt(e.target.value) || 0})}
-                        className="bg-dark-700 border border-dark-600 rounded-lg px-3 py-2 text-sm text-white" placeholder="Дней" />
+                        className="bg-dark-700/50 border border-dark-600/80 rounded-lg px-3 py-2 text-sm text-white" placeholder="Дней" />
                     <input type="number" value={form.price} onChange={e => setForm({...form, price: parseFloat(e.target.value) || 0})}
-                        className="bg-dark-700 border border-dark-600 rounded-lg px-3 py-2 text-sm text-white" placeholder="Цена ₽" />
+                        className="bg-dark-700/50 border border-dark-600/80 rounded-lg px-3 py-2 text-sm text-white" placeholder="Цена ₽" />
                     <input type="number" value={form.sort_order} onChange={e => setForm({...form, sort_order: parseInt(e.target.value) || 0})}
-                        className="bg-dark-700 border border-dark-600 rounded-lg px-3 py-2 text-sm text-white" placeholder="Порядок" />
+                        className="bg-dark-700/50 border border-dark-600/80 rounded-lg px-3 py-2 text-sm text-white" placeholder="Порядок" />
                 </div>
                 <input value={form.description} onChange={e => setForm({...form, description: e.target.value})}
-                    className="w-full bg-dark-700 border border-dark-600 rounded-lg px-3 py-2 text-sm text-white" placeholder="Описание" />
+                    className="w-full bg-dark-700/50 border border-dark-600/80 rounded-lg px-3 py-2 text-sm text-white" placeholder="Описание" />
                 <div className="flex gap-2">
                     <label className="flex items-center gap-2 text-sm text-gray-300">
                         <input type="checkbox" checked={form.is_active} onChange={e => setForm({...form, is_active: e.target.checked})} />
                         Активен
                     </label>
-                    <button onClick={handleSave} className="ml-auto px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 flex items-center gap-2">
+                    <button onClick={handleSave} className="ml-auto px-4 py-2 btn-primary flex items-center gap-2">
                         <Save className="w-4 h-4" /> {editId ? 'Сохранить' : 'Создать'}
                     </button>
                     {editId && <button onClick={() => { setEditId(null); setForm({ name: '', duration_days: 30, price: 200, description: '', is_active: true, sort_order: 0 }); }}
@@ -81,7 +81,7 @@ export default function Tariffs() {
                 </div>
             </div>
 
-            <div className="bg-dark-800 border border-dark-700 rounded-xl overflow-hidden">
+            <div className="glass-card overflow-hidden">
                 <table className="w-full">
                     <thead><tr className="border-b border-dark-700 text-xs text-gray-400">
                         <th className="p-3 text-left">Название</th>
@@ -100,7 +100,7 @@ export default function Tariffs() {
                                     ? <span className="text-[10px] px-2 py-0.5 bg-green-500/20 text-green-400 rounded">Активен</span>
                                     : <span className="text-[10px] px-2 py-0.5 bg-red-500/20 text-red-400 rounded">Отключён</span>}</td>
                                 <td className="p-3 text-center">
-                                    <button onClick={() => startEdit(t)} className="p-1 text-gray-400 hover:text-blue-400"><Edit2 className="w-4 h-4" /></button>
+                                    <button onClick={() => startEdit(t)} className="p-1 text-gray-400 hover:text-accent-400"><Edit2 className="w-4 h-4" /></button>
                                     <button onClick={() => handleDelete(t.id)} className="p-1 text-gray-400 hover:text-red-400"><Trash2 className="w-4 h-4" /></button>
                                 </td>
                             </tr>

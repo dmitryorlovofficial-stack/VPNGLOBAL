@@ -116,11 +116,13 @@ export default function Login({ onLogin }) {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-dark-900 p-4">
-            <div className="w-full max-w-sm animate-fade-in">
+        <div className="min-h-screen flex items-center justify-center bg-dark-950 p-4 relative overflow-hidden">
+            {/* Subtle background glow */}
+            <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-96 h-96 bg-accent-500/5 rounded-full blur-3xl" />
+            <div className="w-full max-w-sm animate-fade-in relative z-10">
                 {/* Логотип */}
                 <div className="flex flex-col items-center mb-8">
-                    <div className="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center mb-4">
+                    <div className="w-16 h-16 bg-gradient-to-br from-accent-400 to-accent-600 rounded-2xl flex items-center justify-center mb-4 shadow-glow animate-pulse-glow">
                         <Shield className="w-8 h-8 text-white" />
                     </div>
                     <h1 className="text-2xl font-bold text-white">VPN Panel</h1>
@@ -129,9 +131,9 @@ export default function Login({ onLogin }) {
 
                 {/* Форма инвайт-кода (после Telegram авторизации) */}
                 {showInvite ? (
-                    <form onSubmit={handleInviteSubmit} className="bg-dark-800 border border-dark-700 rounded-xl p-6 space-y-4">
+                    <form onSubmit={handleInviteSubmit} className="glass-card p-6 space-y-4">
                         <div className="text-center mb-2">
-                            <Ticket className="w-8 h-8 text-blue-400 mx-auto mb-2" />
+                            <Ticket className="w-8 h-8 text-accent-400 mx-auto mb-2" />
                             <p className="text-sm text-gray-300">
                                 Telegram: <span className="text-white font-medium">{tgData?.first_name || tgData?.username}</span>
                             </p>
@@ -144,7 +146,7 @@ export default function Login({ onLogin }) {
                                 type="text"
                                 value={inviteCode}
                                 onChange={e => setInviteCode(e.target.value)}
-                                className="w-full bg-dark-700 border border-dark-600 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 tracking-widest text-center"
+                                className="input-glass focus:outline-none focus:border-accent-500/60 focus:ring-1 focus:ring-accent-500/20 tracking-widest text-center"
                                 placeholder="Введите код"
                                 autoFocus
                             />
@@ -153,7 +155,7 @@ export default function Login({ onLogin }) {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full py-2.5 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors disabled:opacity-50"
+                            className="w-full btn-primary w-full"
                         >
                             {loading ? 'Регистрация...' : 'Зарегистрироваться'}
                         </button>
@@ -169,14 +171,14 @@ export default function Login({ onLogin }) {
                 ) : (
                     <>
                         {/* Форма логина */}
-                        <form onSubmit={handleSubmit} className="bg-dark-800 border border-dark-700 rounded-xl p-6 space-y-4">
+                        <form onSubmit={handleSubmit} className="glass-card p-6 space-y-4">
                             <div>
                                 <label className="block text-sm font-medium text-gray-300 mb-1.5">Логин</label>
                                 <input
                                     type="text"
                                     value={username}
                                     onChange={e => setUsername(e.target.value)}
-                                    className="w-full bg-dark-700 border border-dark-600 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+                                    className="input-glass focus:outline-none focus:border-accent-500/60 focus:ring-1 focus:ring-accent-500/20"
                                     placeholder="admin"
                                     autoFocus
                                 />
@@ -189,7 +191,7 @@ export default function Login({ onLogin }) {
                                         type={showPassword ? 'text' : 'password'}
                                         value={password}
                                         onChange={e => setPassword(e.target.value)}
-                                        className="w-full bg-dark-700 border border-dark-600 rounded-lg px-3 py-2.5 pr-10 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+                                        className="input-glass pr-10 focus:outline-none focus:border-accent-500/60 focus:ring-1 focus:ring-accent-500/20"
                                         placeholder="Пароль"
                                     />
                                     <button
@@ -209,7 +211,7 @@ export default function Login({ onLogin }) {
                                         type="text"
                                         value={totpCode}
                                         onChange={e => setTotpCode(e.target.value)}
-                                        className="w-full bg-dark-700 border border-dark-600 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 tracking-widest text-center"
+                                        className="input-glass focus:outline-none focus:border-accent-500/60 focus:ring-1 focus:ring-accent-500/20 tracking-widest text-center"
                                         placeholder="000000"
                                         maxLength={6}
                                         autoFocus
@@ -220,7 +222,7 @@ export default function Login({ onLogin }) {
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="w-full py-2.5 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors disabled:opacity-50"
+                                className="w-full btn-primary w-full"
                             >
                                 {loading ? 'Вход...' : 'Войти'}
                             </button>

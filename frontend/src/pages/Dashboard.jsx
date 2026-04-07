@@ -29,7 +29,7 @@ function fmtUptime(sec) {
 // Прогресс-бар
 function ProgressBar({ value, max, color = 'blue' }) {
     const pct = max > 0 ? Math.min(100, (value / max) * 100) : 0;
-    const colors = { blue: 'bg-blue-500', green: 'bg-green-500', yellow: 'bg-yellow-500', red: 'bg-red-500' };
+    const colors = { blue: 'bg-accent-500', green: 'bg-emerald-500', yellow: 'bg-yellow-500', red: 'bg-red-500' };
     const barColor = pct > 90 ? colors.red : pct > 70 ? colors.yellow : colors[color];
 
     return (
@@ -43,10 +43,10 @@ function ProgressBar({ value, max, color = 'blue' }) {
 function ServerMiniCard({ server }) {
     const isOnline = server.status === 'online';
     return (
-        <div className="bg-dark-800 border border-dark-700 rounded-xl p-5">
+        <div className="glass-card-hover p-5">
             <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
-                    <Server className={`w-5 h-5 ${isOnline ? 'text-blue-400' : 'text-gray-500'}`} />
+                    <Server className={`w-5 h-5 ${isOnline ? 'text-accent-400' : 'text-gray-500'}`} />
                     <h3 className="text-sm font-semibold text-white">{server.name}</h3>
                 </div>
                 <StatusBadge status={isOnline ? 'online' : 'offline'} />
@@ -152,7 +152,7 @@ export default function Dashboard() {
                             <Server className="w-5 h-5 text-gray-400" />
                             Серверы ({serversCount ?? srv.list?.length ?? 0})
                         </h2>
-                        <a href="/servers" className="text-sm text-blue-400 hover:text-blue-300">Управление</a>
+                        <a href="/servers" className="text-sm text-accent-400 hover:text-accent-300">Управление</a>
                     </div>
                     <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
                         {srv.list?.map(server => (

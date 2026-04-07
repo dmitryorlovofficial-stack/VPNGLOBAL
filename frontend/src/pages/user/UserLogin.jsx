@@ -135,7 +135,7 @@ export default function UserLogin({ onLogin }) {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com"
-                  className="w-full bg-dark-900 border border-dark-600 rounded-xl py-3 pl-11 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
+                  className="w-full bg-dark-900 border border-dark-600 rounded-xl py-3 pl-11 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-accent-500 focus:ring-1 focus:ring-blue-500 transition-colors"
                   autoFocus
                   required
                 />
@@ -146,7 +146,7 @@ export default function UserLogin({ onLogin }) {
               <button
                 type="submit"
                 disabled={loading || !email.trim()}
-                className="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium py-3 rounded-xl transition-colors flex items-center justify-center gap-2"
+                className="w-full bg-gradient-to-r from-accent-500 to-accent-600 hover:shadow-glow-sm disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium py-3 rounded-xl transition-colors flex items-center justify-center gap-2"
               >
                 {loading ? (
                   <Loader2 className="w-5 h-5 animate-spin" />
@@ -168,7 +168,7 @@ export default function UserLogin({ onLogin }) {
                     value={digit}
                     onChange={(e) => handleCodeChange(i, e.target.value)}
                     onKeyDown={(e) => handleKeyDown(i, e)}
-                    className="w-12 h-14 bg-dark-900 border border-dark-600 rounded-xl text-center text-xl text-white font-mono focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
+                    className="w-12 h-14 bg-dark-900 border border-dark-600 rounded-xl text-center text-xl text-white font-mono focus:outline-none focus:border-accent-500 focus:ring-1 focus:ring-blue-500 transition-colors"
                   />
                 ))}
               </div>

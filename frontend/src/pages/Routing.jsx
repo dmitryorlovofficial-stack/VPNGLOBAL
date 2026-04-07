@@ -356,7 +356,7 @@ export default function Routing() {
                                                 </span>
                                             )}
                                             {isEntry && (
-                                                <span className="text-[9px] px-1.5 py-0.5 bg-blue-600/20 text-blue-400 rounded-full font-medium">
+                                                <span className="text-[9px] px-1.5 py-0.5 bg-accent-500/15 text-accent-400 rounded-full font-medium">
                                                     Entry
                                                 </span>
                                             )}
@@ -370,7 +370,7 @@ export default function Routing() {
                                     {/* Body */}
                                     <div className="px-3 py-2 space-y-1">
                                         {srv.domain && (
-                                            <div className="text-[10px] text-blue-400 truncate font-medium">{srv.domain}</div>
+                                            <div className="text-[10px] text-accent-400 truncate font-medium">{srv.domain}</div>
                                         )}
                                         <div className="text-[10px] text-gray-500 truncate">
                                             {srv.ipv4 || srv.host}
@@ -407,16 +407,16 @@ export default function Routing() {
                 const toSrv = serverList.find(s => s.id === link.to_server_id);
 
                 return (
-                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 bg-dark-800 border border-dark-600 rounded-xl shadow-2xl p-4 min-w-[420px]">
+                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 glass-card shadow-2xl p-4 min-w-[420px]">
                         <div className="flex items-center justify-between mb-3">
                             <div className="flex items-center gap-2">
                                 <span className="text-xs px-2 py-0.5 rounded-full font-semibold bg-purple-600 text-white">
                                     Маршрут
                                 </span>
-                                <span className="text-sm font-semibold text-blue-400">
+                                <span className="text-sm font-semibold text-accent-400">
                                     {fromSrv?.name || `#${link.from_server_id}`}
                                 </span>
-                                <span className="text-[9px] px-1.5 py-0.5 bg-blue-600/20 text-blue-400 rounded-full font-medium">Entry</span>
+                                <span className="text-[9px] px-1.5 py-0.5 bg-accent-500/15 text-accent-400 rounded-full font-medium">Entry</span>
                                 <ArrowRight className="w-4 h-4 text-gray-500" />
                                 <span className="text-sm font-semibold text-orange-400">
                                     {toSrv?.name || `#${link.to_server_id}`}
@@ -452,13 +452,13 @@ export default function Routing() {
                             {fromSrv?.domain && (
                                 <div>
                                     <span className="text-gray-500">Entry: </span>
-                                    <span className="text-blue-400">{fromSrv.domain}</span>
+                                    <span className="text-accent-400">{fromSrv.domain}</span>
                                 </div>
                             )}
                             {toSrv?.domain && (
                                 <div>
                                     <span className="text-gray-500">Exit: </span>
-                                    <span className="text-blue-400">{toSrv.domain}</span>
+                                    <span className="text-accent-400">{toSrv.domain}</span>
                                 </div>
                             )}
                         </div>

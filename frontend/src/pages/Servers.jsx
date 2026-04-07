@@ -40,7 +40,7 @@ function fmtDisk(bytes) { return fmtBytes(bytes); }
 // Прогресс-бар
 function ProgressBar({ value, max }) {
     const pct = max > 0 ? Math.min(100, (value / max) * 100) : 0;
-    const color = pct > 90 ? 'bg-red-500' : pct > 70 ? 'bg-yellow-500' : 'bg-blue-500';
+    const color = pct > 90 ? 'bg-red-500' : pct > 70 ? 'bg-yellow-500' : 'bg-accent-500';
     return (
         <div className="w-full bg-dark-700 rounded-full h-2">
             <div className={`h-2 rounded-full transition-all ${color}`} style={{ width: `${pct}%` }} />
@@ -51,7 +51,7 @@ function ProgressBar({ value, max }) {
 // Иконка роли
 function RoleBadge({ role }) {
     const styles = {
-        node: 'bg-blue-600/20 text-blue-400',
+        node: 'bg-accent-500/15 text-accent-400',
         exit: 'bg-green-600/20 text-green-400',
         gateway: 'bg-yellow-600/20 text-yellow-400',
     };
@@ -196,7 +196,7 @@ function XraySection({ serverId }) {
                                 {actionLoading === 'deploy' ? <Loader2 className="w-3 h-3 animate-spin inline" /> : 'Deploy'}
                             </button>
                             <button onClick={() => { setEditInbound(null); setShowInboundModal(true); }}
-                                className="text-[11px] px-2 py-1 bg-blue-600/20 text-blue-400 rounded hover:bg-blue-600/30">
+                                className="text-[11px] px-2 py-1 bg-accent-500/15 text-accent-400 rounded hover:bg-accent-500/25">
                                 <Plus className="w-3 h-3 inline" /> Inbound
                             </button>
                         </>
@@ -217,7 +217,7 @@ function XraySection({ serverId }) {
                             </div>
                             <div className="flex items-center gap-1">
                                 <button onClick={() => { setEditInbound(ib); setShowInboundModal(true); }}
-                                    className="p-1 text-gray-500 hover:text-blue-400 rounded">
+                                    className="p-1 text-gray-500 hover:text-accent-400 rounded">
                                     <Edit className="w-3 h-3" />
                                 </button>
                                 <button onClick={() => handleDeleteInbound(ib.id)}
@@ -604,7 +604,7 @@ function StubSiteSection({ serverId }) {
             {/* Модалка получения SSL */}
             {showSslModal && (
                 <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4" onClick={() => setShowSslModal(false)}>
-                    <div className="bg-dark-800 border border-dark-700 rounded-xl w-full max-w-sm" onClick={e => e.stopPropagation()}>
+                    <div className="glass-card w-full max-w-sm" onClick={e => e.stopPropagation()}>
                         <div className="p-5 border-b border-dark-700 flex items-center justify-between">
                             <h3 className="text-lg font-semibold text-white flex items-center gap-2">
                                 <ShieldCheck className="w-5 h-5 text-green-400" /> SSL-сертификат
@@ -654,7 +654,7 @@ function StubSiteSection({ serverId }) {
             {/* Модалка деплоя */}
             {showDeploy && (
                 <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4" onClick={() => setShowDeploy(false)}>
-                    <div className="bg-dark-800 border border-dark-700 rounded-xl w-full max-w-lg max-h-[85vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+                    <div className="glass-card w-full max-w-lg max-h-[85vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
                         <div className="p-5 border-b border-dark-700 flex items-center justify-between">
                             <h3 className="text-lg font-semibold text-white">Сайт-заглушка</h3>
                             <button onClick={() => setShowDeploy(false)} className="text-gray-500 hover:text-white"><X className="w-5 h-5" /></button>
@@ -813,7 +813,7 @@ function ServerCard({ server, onEdit, onDelete, onRefresh }) {
     };
 
     return (
-        <div className="bg-dark-800 border border-dark-700 rounded-xl overflow-hidden">
+        <div className="glass-card overflow-hidden">
             {/* Заголовок — всегда видим */}
             <div
                 className="p-5 cursor-pointer hover:bg-dark-700/30 transition-colors"
@@ -835,7 +835,7 @@ function ServerCard({ server, onEdit, onDelete, onRefresh }) {
                             </div>
                             <div className="flex items-center gap-3 mt-0.5">
                                 <p className="text-xs text-gray-400">
-                                    {server.domain && <span className="text-blue-400 mr-2">{server.domain}</span>}
+                                    {server.domain && <span className="text-accent-400 mr-2">{server.domain}</span>}
                                     {server.host || server.ipv4 || '—'}
                                     {server.ipv6 && <span className="ml-2 text-gray-500">{server.ipv6}</span>}
                                 </p>
@@ -1062,7 +1062,7 @@ export default function Servers() {
                     </button>
                     <button
                         onClick={() => { setEditServer(null); setShowModal(true); }}
-                        className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
+                        className="flex items-center gap-2 px-4 py-2 btn-primary transition-colors"
                     >
                         <Plus className="w-4 h-4" /> Добавить сервер
                     </button>
@@ -1077,7 +1077,7 @@ export default function Servers() {
                         type="text"
                         value={search}
                         onChange={e => setSearch(e.target.value)}
-                        className="w-full bg-dark-800 border border-dark-700 rounded-lg pl-10 pr-3 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+                        className="w-full bg-dark-800 border border-dark-700 rounded-lg pl-10 pr-3 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-accent-500"
                         placeholder="Поиск по имени, IP, описанию..."
                     />
                 </div>
@@ -1093,7 +1093,7 @@ export default function Servers() {
                     {!search && (
                         <button
                             onClick={() => setShowModal(true)}
-                            className="mt-3 text-sm text-blue-400 hover:text-blue-300"
+                            className="mt-3 text-sm text-accent-400 hover:text-accent-300"
                         >
                             Добавить первый сервер
                         </button>
