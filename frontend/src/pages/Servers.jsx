@@ -160,7 +160,7 @@ function XraySection({ serverId }) {
     if (loading) return <div className="text-xs text-gray-500 py-2">Загрузка Xray...</div>;
 
     return (
-        <div className="space-y-3 border-t border-dark-700 pt-4">
+        <div className="space-y-3">
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                     <span className="text-xs font-medium text-purple-400">Xray-core</span>
@@ -338,7 +338,7 @@ function AgentSection({ server, onRefresh }) {
     const agentStatus = server.agent_status || 'none';
 
     return (
-        <div className="space-y-2 border-t border-dark-700 pt-4">
+        <div className="space-y-3">
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                     <Container className="w-3.5 h-3.5 text-cyan-400" />
@@ -768,14 +768,17 @@ function StubSiteSection({ serverId }) {
     );
 }
 
-// Карточка сервера (раскрываемая)
+// Карточка сервера (раскрываемая) — улучшенный дизайн
 function ServerCard({ server, onEdit, onDelete, onRefresh }) {
     const [expanded, setExpanded] = useState(false);
+    const [activeTab, setActiveTab] = useState('info');
     const [metrics, setMetrics] = useState(null);
     const [metricsLoading, setMetricsLoading] = useState(false);
     const [actionLoading, setActionLoading] = useState('');
 
+    const isOnline = server.status === 'online';
     const isDeploying = server.agent_status === 'deploying';
+    const hasAgent = server.agent_status === 'active';
 
     // Загружаем метрики при раскрытии
     const loadMetrics = useCallback(async () => {
@@ -797,7 +800,7 @@ function ServerCard({ server, onEdit, onDelete, onRefresh }) {
     };
 
     const handleReboot = async () => {
-        if (!confirm(`Перезагрузить сервер "${server.name}"? Это может занять несколько минут.`)) return;
+        if (!confirm(`Перезагрузить сервер "${server.name}"?`)) return;
         setActionLoading('reboot');
         try {
             await servers.reboot(server.id);
@@ -807,172 +810,191 @@ function ServerCard({ server, onEdit, onDelete, onRefresh }) {
     };
 
     const handleDelete = () => {
-        if (server.client_count > 0) {
-            if (!confirm(`На сервере есть клиенты (VPN: ${server.client_count}). Удалить?`)) return;
-        } else {
-            if (!confirm(`Удалить сервер "${server.name}"?`)) return;
-        }
+        const msg = server.client_count > 0
+            ? `На сервере ${server.client_count} клиентов. Удалить "${server.name}"?`
+            : `Удалить сервер "${server.name}"?`;
+        if (!confirm(msg)) return;
         onDelete(server.id);
     };
 
+    const tabs = [
+        { id: 'info', label: 'Инфо' },
+        { id: 'xray', label: 'Xray' },
+        { id: 'stub', label: 'Stub Site' },
+        { id: 'agent', label: 'Агент' },
+    ];
+
     return (
         <div className="glass-card overflow-hidden">
-            {/* Заголовок — всегда видим */}
-            <div
-                className="p-5 cursor-pointer hover:bg-dark-700/30 transition-colors"
-                onClick={handleExpand}
-            >
+            {/* Заголовок — компактный, информативный */}
+            <div className="p-4 cursor-pointer hover:bg-dark-700/20 transition-colors" onClick={handleExpand}>
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3 min-w-0">
-                        <div className={`p-2.5 rounded-lg flex-shrink-0 ${
-                            server.status === 'online' ? 'bg-green-600/20' : 'bg-dark-600'
-                        }`}>
-                            <Server className={`w-5 h-5 ${
-                                server.status === 'online' ? 'text-green-400' : 'text-gray-500'
+                        {/* Статус-индикатор */}
+                        <div className="relative flex-shrink-0">
+                            <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                                isOnline ? 'bg-accent-500/10' : 'bg-dark-600'
+                            }`}>
+                                <Server className={`w-5 h-5 ${isOnline ? 'text-accent-400' : 'text-gray-500'}`} />
+                            </div>
+                            <div className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-dark-800 ${
+                                isOnline ? 'bg-green-400' : 'bg-gray-500'
                             }`} />
                         </div>
+
                         <div className="min-w-0">
-                            <div className="flex items-center gap-2 flex-wrap">
+                            <div className="flex items-center gap-2">
                                 <h3 className="text-sm font-semibold text-white truncate">{server.name}</h3>
                                 <RoleBadge role={server.role} />
-                            </div>
-                            <div className="flex items-center gap-3 mt-0.5">
-                                <p className="text-xs text-gray-400">
-                                    {server.domain && <span className="text-accent-400 mr-2">{server.domain}</span>}
-                                    {server.host || server.ipv4 || '—'}
-                                    {server.ipv6 && <span className="ml-2 text-gray-500">{server.ipv6}</span>}
-                                </p>
-                                {server.description && (
-                                    <p className="text-xs text-gray-500 truncate max-w-[200px]">{server.description}</p>
+                                {isDeploying && (
+                                    <span className="flex items-center gap-1 text-[10px] text-yellow-400 animate-pulse">
+                                        <Loader2 className="w-3 h-3 animate-spin" /> Настройка
+                                    </span>
                                 )}
                             </div>
+                            <p className="text-xs text-gray-500 truncate mt-0.5">
+                                {server.domain && <span className="text-accent-400 mr-1.5">{server.domain}</span>}
+                                {server.host || server.ipv4 || '—'}
+                            </p>
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-3 flex-shrink-0">
-                        {/* Протоколы */}
-                        <div className="hidden sm:flex items-center gap-1.5">
-                            {server.protocols?.map(p => (
-                                <ProtocolBadge key={p.protocol} protocol={p.protocol} status={p.status} />
-                            ))}
-                        </div>
-
-                        {/* Счётчики */}
-                        <div className="hidden md:flex items-center gap-3 text-xs text-gray-400">
-                            <span title="VPN-клиенты"><Wifi className="w-3 h-3 inline mr-1" />{server.client_count || 0}</span>
-                            {server.link_count > 0 && (
-                                <span title="Связи"><Link2 className="w-3 h-3 inline mr-1" />{server.link_count}</span>
-                            )}
-                        </div>
-
-                        {isDeploying && (
-                            <span className="flex items-center gap-1.5 text-[11px] text-yellow-400 bg-yellow-600/10 px-2 py-1 rounded-lg animate-pulse">
-                                <Loader2 className="w-3 h-3 animate-spin" /> Настройка...
-                            </span>
+                    <div className="flex items-center gap-4 flex-shrink-0">
+                        {/* Мини-метрики в заголовке */}
+                        {isOnline && metrics && !metrics.error && (
+                            <div className="hidden lg:flex items-center gap-3 text-[11px] text-gray-400">
+                                <span><Cpu className="w-3 h-3 inline mr-0.5" />{metrics.cpu}%</span>
+                                <span><MemoryStick className="w-3 h-3 inline mr-0.5" />{fmtRam(metrics.ram?.used)}</span>
+                                {metrics.uptime && <span>{fmtUptime(metrics.uptime)}</span>}
+                            </div>
                         )}
-                        <StatusBadge status={server.status} />
-                        {expanded ? <ChevronUp className="w-4 h-4 text-gray-500" /> : <ChevronDown className="w-4 h-4 text-gray-500" />}
+
+                        <div className="hidden sm:flex items-center gap-2 text-[11px] text-gray-400">
+                            <span><Wifi className="w-3 h-3 inline mr-0.5" />{server.client_count || 0}</span>
+                            {server.link_count > 0 && <span><Link2 className="w-3 h-3 inline mr-0.5" />{server.link_count}</span>}
+                        </div>
+
+                        {expanded
+                            ? <ChevronUp className="w-4 h-4 text-gray-500" />
+                            : <ChevronDown className="w-4 h-4 text-gray-500" />
+                        }
                     </div>
                 </div>
             </div>
 
-            {/* Раскрытая секция */}
+            {/* Раскрытая секция с табами */}
             {expanded && (
-                <div className="border-t border-dark-700 p-5 space-y-4 animate-fade-in">
-                    {/* Метрики */}
-                    {metricsLoading ? (
-                        <div className="flex items-center justify-center py-4 text-gray-500 text-sm">
-                            <Loader2 className="w-4 h-4 animate-spin mr-2" /> Загрузка метрик...
-                        </div>
-                    ) : metrics && !metrics.error ? (
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                            <div>
-                                <div className="flex justify-between text-xs text-gray-400 mb-1">
-                                    <span className="flex items-center gap-1"><Cpu className="w-3 h-3" /> CPU</span>
-                                    <span>{metrics.cpu}%</span>
-                                </div>
-                                <ProgressBar value={metrics.cpu} max={100} />
-                            </div>
-                            <div>
-                                <div className="flex justify-between text-xs text-gray-400 mb-1">
-                                    <span className="flex items-center gap-1"><MemoryStick className="w-3 h-3" /> RAM</span>
-                                    <span>{fmtRam(metrics.ram?.used)} / {fmtRam(metrics.ram?.total)}</span>
-                                </div>
-                                <ProgressBar value={metrics.ram?.used || 0} max={metrics.ram?.total || 1} />
-                            </div>
-                            <div>
-                                <div className="flex justify-between text-xs text-gray-400 mb-1">
-                                    <span className="flex items-center gap-1"><HardDrive className="w-3 h-3" /> Disk</span>
-                                    <span>{fmtDisk(metrics.disk?.used)} / {fmtDisk(metrics.disk?.total)}</span>
-                                </div>
-                                <ProgressBar value={metrics.disk?.used || 0} max={metrics.disk?.total || 1} />
-                            </div>
-                        </div>
-                    ) : metrics?.error ? (
-                        <div className="text-xs text-red-400 bg-red-600/10 px-3 py-2 rounded-lg">
-                            Ошибка метрик: {metrics.error}
-                        </div>
-                    ) : null}
-
-                    {/* Информация о сервере */}
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-                        {server.os_info && (
-                            <div><span className="text-gray-500">ОС:</span> <span className="text-gray-300">{server.os_info}</span></div>
-                        )}
-                        {server.kernel && (
-                            <div><span className="text-gray-500">Ядро:</span> <span className="text-gray-300">{server.kernel}</span></div>
-                        )}
-                        {server.main_iface && <div><span className="text-gray-500">Интерфейс:</span> <span className="text-gray-300">{server.main_iface}</span></div>}
-                        {metrics?.uptime && (
-                            <div><span className="text-gray-500">Аптайм:</span> <span className="text-gray-300">{fmtUptime(metrics.uptime)}</span></div>
-                        )}
-                    </div>
-
-                    {/* Протоколы (мобильная версия) */}
-                    <div className="sm:hidden flex flex-wrap gap-1.5">
-                        {server.protocols?.map(p => (
-                            <ProtocolBadge key={p.protocol} protocol={p.protocol} status={p.status} />
+                <div className="border-t border-dark-700/50 animate-fade-in">
+                    {/* Табы */}
+                    <div className="flex items-center border-b border-dark-700/50 px-4">
+                        {tabs.map(tab => (
+                            <button
+                                key={tab.id}
+                                onClick={() => setActiveTab(tab.id)}
+                                className={`px-3 py-2.5 text-xs font-medium transition-colors relative ${
+                                    activeTab === tab.id
+                                        ? 'text-accent-400'
+                                        : 'text-gray-500 hover:text-gray-300'
+                                }`}
+                            >
+                                {tab.label}
+                                {activeTab === tab.id && (
+                                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-accent-500 rounded-full" />
+                                )}
+                            </button>
                         ))}
+
+                        {/* Кнопки управления справа */}
+                        <div className="ml-auto flex items-center gap-1 py-1.5">
+                            <button onClick={() => onEdit(server)}
+                                className="p-1.5 text-gray-500 hover:text-accent-400 rounded transition-colors" title="Изменить">
+                                <Edit className="w-3.5 h-3.5" />
+                            </button>
+                            <button onClick={handleReboot} disabled={actionLoading === 'reboot'}
+                                className="p-1.5 text-gray-500 hover:text-yellow-400 rounded transition-colors disabled:opacity-50" title="Перезагрузка">
+                                {actionLoading === 'reboot' ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Power className="w-3.5 h-3.5" />}
+                            </button>
+                            <button onClick={handleDelete}
+                                className="p-1.5 text-gray-500 hover:text-red-400 rounded transition-colors" title="Удалить">
+                                <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                        </div>
                     </div>
 
-                    {/* Xray секция */}
-                    <XraySection serverId={server.id} />
+                    {/* Контент табов */}
+                    <div className="p-4">
+                        {/* ─── Инфо ─── */}
+                        {activeTab === 'info' && (
+                            <div className="space-y-4 animate-fade-in">
+                                {/* Метрики */}
+                                {metricsLoading ? (
+                                    <div className="flex items-center justify-center py-6 text-gray-500 text-sm">
+                                        <Loader2 className="w-4 h-4 animate-spin mr-2" /> Загрузка...
+                                    </div>
+                                ) : metrics && !metrics.error ? (
+                                    <div className="grid grid-cols-3 gap-3">
+                                        {[
+                                            { label: 'CPU', icon: Cpu, val: metrics.cpu, max: 100, fmt: v => `${v}%` },
+                                            { label: 'RAM', icon: MemoryStick, val: metrics.ram?.used || 0, max: metrics.ram?.total || 1, fmt: v => fmtRam(v) },
+                                            { label: 'Disk', icon: HardDrive, val: metrics.disk?.used || 0, max: metrics.disk?.total || 1, fmt: v => fmtDisk(v) },
+                                        ].map(m => (
+                                            <div key={m.label} className="bg-dark-900/40 rounded-lg p-3">
+                                                <div className="flex justify-between text-xs text-gray-400 mb-2">
+                                                    <span className="flex items-center gap-1"><m.icon className="w-3 h-3" /> {m.label}</span>
+                                                    <span>{m.fmt(m.val)} / {m.fmt(m.max)}</span>
+                                                </div>
+                                                <ProgressBar value={m.val} max={m.max} />
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : metrics?.error ? (
+                                    <div className="text-xs text-red-400 bg-red-600/10 px-3 py-2 rounded-lg">{metrics.error}</div>
+                                ) : null}
 
-                    {/* Stub Site секция */}
-                    <StubSiteSection serverId={server.id} />
+                                {/* Системная информация */}
+                                <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-4 gap-y-2 text-xs bg-dark-900/30 rounded-lg p-3">
+                                    {server.os_info && <div><span className="text-gray-500">ОС</span><br/><span className="text-gray-300">{server.os_info}</span></div>}
+                                    {server.kernel && <div><span className="text-gray-500">Ядро</span><br/><span className="text-gray-300">{server.kernel}</span></div>}
+                                    {server.main_iface && <div><span className="text-gray-500">Интерфейс</span><br/><span className="text-gray-300">{server.main_iface}</span></div>}
+                                    {metrics?.uptime && <div><span className="text-gray-500">Аптайм</span><br/><span className="text-gray-300">{fmtUptime(metrics.uptime)}</span></div>}
+                                    {server.ipv4 && <div><span className="text-gray-500">IPv4</span><br/><span className="text-gray-300">{server.ipv4}</span></div>}
+                                    {server.ipv6 && <div><span className="text-gray-500">IPv6</span><br/><span className="text-gray-300 break-all">{server.ipv6}</span></div>}
+                                    {server.domain && <div><span className="text-gray-500">Домен</span><br/><span className="text-accent-400">{server.domain}</span></div>}
+                                    {server.description && <div><span className="text-gray-500">Описание</span><br/><span className="text-gray-300">{server.description}</span></div>}
+                                </div>
+                            </div>
+                        )}
 
-                    {/* Docker Agent секция */}
-                    <AgentSection server={server} onRefresh={onRefresh} />
+                        {/* ─── Xray ─── */}
+                        {activeTab === 'xray' && <XraySection serverId={server.id} />}
 
-                    {/* Кнопки управления */}
-                    <div className="flex flex-wrap gap-2 border-t border-dark-700 pt-4">
-                        <button
-                            onClick={() => onEdit(server)}
-                            className="flex items-center gap-1.5 px-3 py-1.5 bg-dark-700 text-gray-300 rounded-lg text-xs hover:bg-dark-600 transition-colors"
-                        >
-                            <Edit className="w-3 h-3" /> Изменить
-                        </button>
+                        {/* ─── Stub Site ─── */}
+                        {activeTab === 'stub' && <StubSiteSection serverId={server.id} />}
 
-                        <div className="flex-1" />
-
-                        <button
-                            onClick={handleReboot}
-                            disabled={actionLoading === 'reboot'}
-                            className="flex items-center gap-1.5 px-3 py-1.5 bg-yellow-600/20 text-yellow-400 rounded-lg text-xs hover:bg-yellow-600/30 transition-colors disabled:opacity-50"
-                        >
-                            {actionLoading === 'reboot' ? <Loader2 className="w-3 h-3 animate-spin" /> : <Power className="w-3 h-3" />}
-                            Перезагрузка
-                        </button>
-                        <button
-                            onClick={handleDelete}
-                            className="flex items-center gap-1.5 px-3 py-1.5 bg-red-600/20 text-red-400 rounded-lg text-xs hover:bg-red-600/30 transition-colors"
-                        >
-                            <Trash2 className="w-3 h-3" /> Удалить
-                        </button>
+                        {/* ─── Агент ─── */}
+                        {activeTab === 'agent' && <AgentSection server={server} onRefresh={onRefresh} />}
                     </div>
                 </div>
             )}
         </div>
+    );
+}
+
+// Вспомогательная кнопка для секций
+function SectionButton({ onClick, disabled, loading, icon: Icon, children, variant = 'default' }) {
+    const styles = {
+        default: 'bg-dark-600 text-gray-300 hover:bg-dark-500',
+        primary: 'bg-accent-500/15 text-accent-400 hover:bg-accent-500/25',
+        warning: 'bg-yellow-600/15 text-yellow-400 hover:bg-yellow-600/25',
+        danger: 'bg-red-600/10 text-red-400 hover:bg-red-600/20',
+        success: 'bg-green-600/15 text-green-400 hover:bg-green-600/25',
+    };
+    return (
+        <button onClick={onClick} disabled={disabled || loading}
+            className={`flex items-center gap-1.5 text-[11px] px-2.5 py-1.5 rounded-lg font-medium transition-colors disabled:opacity-50 ${styles[variant]}`}>
+            {loading ? <Loader2 className="w-3 h-3 animate-spin" /> : Icon && <Icon className="w-3 h-3" />}
+            {children}
+        </button>
     );
 }
 
