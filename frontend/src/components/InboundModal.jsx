@@ -23,7 +23,7 @@ export default function InboundModal({ serverId, inbound, onClose, onSaved }) {
         listen: inbound?.listen || '0.0.0.0',
         remark: inbound?.remark || '',
         // Transport
-        network: inbound?.stream_settings?.network || 'xhttp',
+        network: inbound?.stream_settings?.network || 'tcp',
         security: inbound?.stream_settings?.security || 'reality',
         // VLESS flow
         flow: inbound?.settings?.flow || '',
