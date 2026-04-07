@@ -108,13 +108,35 @@ DEOF`);
 
     async _getSudo(ssh, server) {
         const r = await ssh.execCommand('whoami', { cwd: '/' });
-        if (r.stdout.trim() === 'root') return '';
+        const user = r.stdout.trim();
+        if (user === 'root') return '';
+
+        console.log(`[BOOTSTRAP] Пользователь: ${user}, определяем sudo...`);
+
         // Проверяем sudo без пароля
-        const test = await ssh.execCommand('sudo -n true 2>/dev/null; echo $?', { cwd: '/' });
-        if (test.stdout.trim() === '0') return 'sudo ';
-        // sudo с паролем через ssh_password или ssh_key_passphrase
+        const test = await ssh.execCommand('sudo -n true 2>&1; echo "EXIT:$?"', { cwd: '/' });
+        const exitMatch = test.stdout.match(/EXIT:(\d+)/);
+        if (exitMatch && exitMatch[1] === '0') {
+            console.log('[BOOTSTRAP] sudo без пароля — OK');
+            return 'sudo ';
+        }
+
+        // sudo с паролем
         const pass = server?.ssh_password || server?.ssh_key_passphrase || '';
-        if (pass) return `echo '${pass.replace(/'/g, "'\''")}' | sudo -S `;
+        if (pass) {
+            // Проверяем что sudo с паролем работает
+            const escapedPass = pass.replace(/'/g, "'\\''");
+            const prefix = `echo '${escapedPass}' | sudo -S -p '' `;
+            const check = await ssh.execCommand(`${prefix}whoami 2>/dev/null`, { cwd: '/' });
+            if (check.stdout.trim() === 'root') {
+                console.log('[BOOTSTRAP] sudo с паролем — OK');
+                return prefix;
+            }
+            console.warn('[BOOTSTRAP] sudo с паролем не сработал, пробуем без -p');
+            return `echo '${escapedPass}' | sudo -S `;
+        }
+
+        console.warn('[BOOTSTRAP] Нет пароля для sudo, пробуем sudo напрямую');
         return 'sudo ';
     }
 
@@ -132,8 +154,8 @@ DEOF`);
             const ssh = await sshManager.connect(serverId);
             const exec = async (cmd) => {
                 const r = await ssh.execCommand(cmd, { cwd: '/' });
-                if (r.stderr && !r.stdout && r.code !== 0) {
-                    throw new Error(r.stderr);
+                if (r.code !== 0 && !r.stdout) {
+                    throw new Error(r.stderr || `Command failed: ${cmd}`);
                 }
                 return r.stdout.trim();
             };
@@ -149,10 +171,12 @@ DEOF`);
             if (sudo) console.log(`[BOOTSTRAP] Не-root пользователь, используем sudo`);
 
             // Переопределяем exec/execSafe с sudo для системных команд
+            // Важно: sudo пишет промпт в stderr — это НЕ ошибка
             const execRoot = async (cmd) => {
                 const r = await ssh.execCommand(sudo + cmd, { cwd: '/' });
-                if (r.stderr && !r.stdout && r.code !== 0) {
-                    throw new Error(r.stderr);
+                // Ошибка только если код != 0 И stderr содержит реальную ошибку (не sudo prompt)
+                if (r.code !== 0 && r.stderr && !r.stderr.includes('[sudo]') && !r.stderr.includes('password')) {
+                    throw new Error(r.stderr.split('\n')[0]);
                 }
                 return r.stdout.trim();
             };
@@ -165,7 +189,10 @@ DEOF`);
             const dockerVersion = await execRootSafe('docker --version 2>/dev/null');
             if (!dockerVersion) {
                 console.log('[BOOTSTRAP] Docker не найден, устанавливаем...');
-                await execRoot('bash -c "curl -fsSL https://get.docker.com | sh"');
+                // Скачиваем скрипт отдельно, затем запускаем через sudo
+                await execSafe('curl -fsSL https://get.docker.com -o /tmp/get-docker.sh');
+                await execRoot('sh /tmp/get-docker.sh');
+                await execSafe('rm -f /tmp/get-docker.sh');
                 await execRootSafe('systemctl enable docker');
                 // Добавляем текущего пользователя в группу docker (для не-root)
                 if (sudo) {
@@ -215,7 +242,7 @@ DEOF`);
             await ssh.putFile(`${agentDir}/src/routes/stub-site.js`, '/tmp/vpn-node-agent/src/routes/stub-site.js');
 
             console.log('[BOOTSTRAP] Собираем Docker-образ...');
-            await execRoot(`bash -c 'cd /tmp/vpn-node-agent && docker build -t ${AGENT_IMAGE}:latest .'`);
+            await execRoot(`docker build -t ${AGENT_IMAGE}:latest /tmp/vpn-node-agent`);
 
             // 4. Генерируем API-ключ
             const apiKey = this.generateApiKey();
@@ -341,7 +368,7 @@ DEOF`);
             const sudo = await this._getSudo(ssh, server);
             const execRoot = async (cmd) => {
                 const r = await ssh.execCommand(sudo + cmd, { cwd: '/' });
-                if (r.stderr && !r.stdout && r.code !== 0) throw new Error(r.stderr);
+                if (r.code !== 0 && r.stderr && !r.stderr.includes('[sudo]') && !r.stderr.includes('password')) throw new Error(r.stderr.split('\n')[0]);
                 return r.stdout.trim();
             };
             const exec = async (cmd) => {
@@ -370,7 +397,7 @@ DEOF`);
             await ssh.putFile(`${agentDir}/src/routes/xray.js`, '/tmp/vpn-node-agent/src/routes/xray.js');
             await ssh.putFile(`${agentDir}/src/routes/stub-site.js`, '/tmp/vpn-node-agent/src/routes/stub-site.js');
 
-            await execRoot(`bash -c 'cd /tmp/vpn-node-agent && docker build -t ${AGENT_IMAGE}:latest .'`);
+            await execRoot(`docker build -t ${AGENT_IMAGE}:latest /tmp/vpn-node-agent`);
 
             // Пересоздаём контейнер с тем же API key
             const agentPort = server.agent_port || 8443;
@@ -431,7 +458,7 @@ DEOF`);
             const sudo = await this._getSudo(ssh, server);
             const execRoot = async (cmd) => {
                 const r = await ssh.execCommand(sudo + cmd, { cwd: '/' });
-                if (r.stderr && !r.stdout && r.code !== 0) throw new Error(r.stderr);
+                if (r.code !== 0 && r.stderr && !r.stderr.includes('[sudo]') && !r.stderr.includes('password')) throw new Error(r.stderr.split('\n')[0]);
                 return r.stdout.trim();
             };
 
