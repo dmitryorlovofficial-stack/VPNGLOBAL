@@ -194,14 +194,24 @@ DEOF`);
                 await execRoot('sh /tmp/get-docker.sh');
                 await execSafe('rm -f /tmp/get-docker.sh');
                 await execRootSafe('systemctl enable docker');
+                await execRootSafe('systemctl start docker');
+                // Ждём пока Docker daemon поднимется
+                console.log('[BOOTSTRAP] Ожидаем запуск Docker daemon...');
+                for (let i = 0; i < 15; i++) {
+                    const check = await execRootSafe('docker info >/dev/null 2>&1 && echo OK || echo WAIT');
+                    if (check.includes('OK')) break;
+                    await new Promise(r => setTimeout(r, 2000));
+                }
                 // Добавляем текущего пользователя в группу docker (для не-root)
                 if (sudo) {
                     const whoami = await execSafe('whoami');
                     await execRootSafe(`usermod -aG docker ${whoami}`);
                     console.log(`[BOOTSTRAP] Пользователь ${whoami} добавлен в группу docker`);
                 }
-                console.log('[BOOTSTRAP] Docker установлен');
+                console.log('[BOOTSTRAP] Docker установлен и запущен');
             } else {
+                // Убедимся что Docker запущен
+                await execRootSafe('systemctl start docker 2>/dev/null');
                 console.log(`[BOOTSTRAP] Docker найден: ${dockerVersion}`);
             }
 
@@ -251,6 +261,11 @@ DEOF`);
             // 4.5. Создаём директории для volume mounts (нужен root)
             await execRootSafe('mkdir -p /usr/local/etc/xray /var/log/xray /var/www/stub-site /var/www/acme-challenge');
 
+            // 4.6. Открываем порт агента в файрволе
+            await execRootSafe(`ufw allow ${agentPort}/tcp 2>/dev/null || firewall-cmd --permanent --add-port=${agentPort}/tcp 2>/dev/null && firewall-cmd --reload 2>/dev/null || true`);
+            // Открываем порт 443 (VPN)
+            await execRootSafe('ufw allow 443/tcp 2>/dev/null || firewall-cmd --permanent --add-port=443/tcp 2>/dev/null && firewall-cmd --reload 2>/dev/null || true');
+
             // 5. Запускаем контейнер
             console.log('[BOOTSTRAP] Запускаем контейнер...');
             const dockerRunCmd = [
@@ -281,22 +296,39 @@ DEOF`);
                 [agentPort, apiKey, serverId]
             );
 
-            // 7. Ждём health check (до 30 сек)
-            console.log('[BOOTSTRAP] Ожидаем health check...');
+            // 7. Проверяем что контейнер запущен через SSH
+            await new Promise(r => setTimeout(r, 3000));
+            const containerStatus = await execRootSafe(`docker ps --filter name=${CONTAINER_NAME} --format '{{.Status}}' 2>/dev/null`);
+            console.log(`[BOOTSTRAP] Контейнер ${CONTAINER_NAME}: ${containerStatus || 'не найден'}`);
+            if (!containerStatus) {
+                // Контейнер не запустился — проверяем логи
+                const logs = await execRootSafe(`docker logs ${CONTAINER_NAME} --tail 20 2>&1`);
+                console.error(`[BOOTSTRAP] Контейнер не запущен! Логи:\n${logs}`);
+            }
+
+            // 8. Ждём health check (до 60 сек)
+            console.log(`[BOOTSTRAP] Ожидаем health check http://${server.ipv4 || server.host}:${agentPort}...`);
             let healthy = false;
-            for (let i = 0; i < 15; i++) {
-                await new Promise(r => setTimeout(r, 2000));
+            for (let i = 0; i < 20; i++) {
+                await new Promise(r => setTimeout(r, 3000));
                 try {
                     const health = await nodeClient.healthCheck(serverId);
                     if (health && health.status === 'ok') {
                         healthy = true;
+                        console.log(`[BOOTSTRAP] Health check OK (попытка ${i + 1})`);
                         break;
                     }
-                } catch {}
+                } catch (err) {
+                    if (i % 5 === 4) console.log(`[BOOTSTRAP] Health check попытка ${i + 1}: ${err.message}`);
+                }
             }
 
             if (!healthy) {
-                console.warn('[BOOTSTRAP] Health check не прошёл, но контейнер запущен');
+                console.warn('[BOOTSTRAP] Health check не прошёл за 60 сек');
+                // Проверяем контейнер через SSH
+                const isRunning = await execRootSafe(`docker ps -q --filter name=${CONTAINER_NAME} 2>/dev/null`);
+                const dockerLogs = await execRootSafe(`docker logs ${CONTAINER_NAME} --tail 10 2>&1`);
+                console.warn(`[BOOTSTRAP] Контейнер ${isRunning ? 'запущен' : 'НЕ запущен'}. Логи: ${dockerLogs}`);
                 await query(
                     "UPDATE servers SET agent_status = 'error', updated_at = NOW() WHERE id = $1",
                     [serverId]
