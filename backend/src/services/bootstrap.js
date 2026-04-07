@@ -572,7 +572,7 @@ DEOF`);
                 const existingStub = await queryOne('SELECT id FROM stub_sites WHERE server_id = $1', [serverId]);
                 if (!existingStub) {
                     const serverData = await queryOne('SELECT domain, host FROM servers WHERE id = $1', [serverId]);
-                    const domain = serverData?.domain || serverData?.host || 'server';
+                    const domain = serverData?.domain || serverData?.host || '';
                     console.log(`[BOOTSTRAP] #${serverId}: Деплоим stub site (gitlab)...`);
                     await stubService.deployStubSite(serverId, {
                         templateId: 'gitlab',

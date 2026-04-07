@@ -235,10 +235,11 @@ async function updateRealityDest(serverId, internalPort, domain) {
         // Обновляем dest на локальный nginx
         rs.dest = `127.0.0.1:${internalPort}`;
 
-        // serverNames = только домен сервера (убираем дефолтные google/microsoft)
-        if (domain) {
+        // serverNames = домен сервера (только если это реальный домен, не IP)
+        if (domain && !/^\d+\.\d+\.\d+\.\d+$/.test(domain) && domain !== 'server') {
             rs.serverNames = [domain];
         }
+        // Если домен не задан — оставляем текущие serverNames (google.com)
 
         ss.realitySettings = rs;
 
