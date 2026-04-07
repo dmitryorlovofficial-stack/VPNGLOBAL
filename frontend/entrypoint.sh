@@ -45,13 +45,12 @@ server {
     }
 
     location / {
-        return 301 https://\$server_name\$request_uri;
+        return 301 https://\$server_name:${LISTEN_PORT}\$request_uri;
     }
 }
 
-# HTTPS (443 + PANEL_PORT)
+# HTTPS
 server {
-    listen 443 ssl http2;
     listen ${LISTEN_PORT} ssl http2;
     server_name ${DOMAIN};
 
@@ -106,7 +105,7 @@ server {
 }
 NGINXEOF
 
-    echo "[NGINX] HTTPS: ${DOMAIN}, :80 (redirect) + :443 + :${LISTEN_PORT} (SSL), proxy -> ${BACKEND}"
+    echo "[NGINX] HTTPS: ${DOMAIN}, :80 (redirect) + :${LISTEN_PORT} (SSL), proxy -> ${BACKEND}"
 
 elif [ "$SSL" = "true" ] && [ -n "$DOMAIN" ]; then
     # ═══════════════════════════════════════════════════

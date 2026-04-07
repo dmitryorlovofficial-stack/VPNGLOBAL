@@ -63,7 +63,6 @@ services:
     ports:
       - "${PANEL_PORT:-9443}:${PANEL_PORT:-9443}"
       - "80:80"
-      - "443:443"
     volumes:
       - /etc/letsencrypt:/etc/letsencrypt:ro
       - /var/www/acme-challenge:/var/www/acme-challenge:ro
