@@ -1,0 +1,77 @@
+# Docker Compose — VPN Panel (панель управления VPN-серверами)
+# Панель НЕ является VPN-сервером
+# На управляемые серверы ставится Docker-агент (vpn-node-agent) через SSH bootstrap
+# После установки все операции идут через HTTP API агента
+#
+# Backend использует network_mode: host для полного IPv4/IPv6 доступа
+# (SSH к серверам, HTTP к агентам)
+# Запуск: docker compose up -d
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: vpn-panel-postgres
+    environment:
+      POSTGRES_DB: vpnpanel
+      POSTGRES_USER: vpn
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-vpn_secret_change_me}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:5432:5432"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U vpn -d vpnpanel"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+    container_name: vpn-panel-backend
+    network_mode: host
+    env_file: .env
+    environment:
+      - DATABASE_URL=postgresql://vpn:${DB_PASSWORD:-vpn_secret_change_me}@127.0.0.1:5432/vpnpanel
+    volumes:
+      - ./backend/data:/app/data
+      - ./configs:/app/configs
+      - ./agent:/app/agent
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /etc/letsencrypt:/etc/letsencrypt
+      - /var/lib/letsencrypt:/var/lib/letsencrypt
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: vpn-panel-frontend
+    extra_hosts:
+      - "backend:host-gateway"
+    environment:
+      - PANEL_PORT=${PANEL_PORT:-9443}
+      - BACKEND_URL=http://backend:3000
+    ports:
+      - "${PANEL_PORT:-9443}:${PANEL_PORT:-9443}"
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+      - /var/www/acme-challenge:/var/www/acme-challenge:ro
+      - ./configs:/app/configs:ro
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

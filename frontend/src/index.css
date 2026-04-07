@@ -1,0 +1,46 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Базовые стили для тёмной темы */
+body {
+    @apply bg-dark-900 text-gray-100 antialiased;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* Скроллбар */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    @apply bg-dark-800;
+}
+
+::-webkit-scrollbar-thumb {
+    @apply bg-dark-500 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    @apply bg-dark-400;
+}
+
+/* Анимации */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* Модальное окно */
+.modal-overlay {
+    @apply fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center;
+}
+
+.modal-content {
+    @apply bg-dark-800 rounded-xl border border-dark-600 shadow-2xl max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto;
+}

@@ -1,0 +1,9 @@
+{
+  "id": "vk",
+  "name": "VK ID",
+  "description": "Форма авторизации VK ID — социальная сеть ВКонтакте",
+  "variables": {
+    "app_name": "VK",
+    "instance_url": "id.vk.com"
+  }
+}

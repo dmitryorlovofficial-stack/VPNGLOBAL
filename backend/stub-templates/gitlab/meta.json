@@ -1,0 +1,9 @@
+{
+  "id": "gitlab",
+  "name": "GitLab",
+  "description": "Форма авторизации GitLab — DevOps-платформа",
+  "variables": {
+    "instance_name": "GitLab",
+    "instance_url": "gitlab.example.com"
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "name": "vpn-panel-backend",
+  "version": "2.0.0",
+  "description": "Backend панели управления VPN (PostgreSQL + мульти-сервер)",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "migrate": "node src/db/migrations/migrate.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "pg": "^8.11.3",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2",
+    "cors": "^2.8.5",
+    "helmet": "^7.1.0",
+    "express-rate-limit": "^7.1.5",
+    "qrcode": "^1.5.3",
+    "otplib": "^12.0.1",
+    "node-cron": "^3.0.3",
+    "node-ssh": "^13.1.0",
+    "dotenv": "^16.3.1",
+    "morgan": "^1.10.0",
+    "express-validator": "^7.0.1"
+  }
+}

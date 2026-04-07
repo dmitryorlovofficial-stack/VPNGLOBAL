@@ -1,0 +1,217 @@
+/* Nextcloud Login — authentic look */
+:root {
+    --color-primary: #0082c9;
+    --color-primary-hover: #006aa3;
+    --color-primary-text: #fff;
+    --color-background: #0082c9;
+    --color-main-bg: #fff;
+    --color-text: #222;
+    --color-text-light: #767676;
+    --color-border: #dbdbdb;
+    --color-error: #e9322d;
+    --border-radius: 10px;
+    --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, 'Helvetica Neue', Arial, sans-serif;
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: var(--font);
+    background: var(--color-background);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header */
+#header {
+    padding: 15px 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 64px;
+}
+.header-appname-container { display: flex; align-items: center; }
+.header-title { text-decoration: none; }
+.logo svg { display: block; height: 34px; width: auto; }
+
+/* Main content */
+#content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0 20px 40px;
+}
+
+/* Login wrapper */
+.login-wrapper {
+    background: var(--color-main-bg);
+    border-radius: var(--border-radius);
+    padding: 30px;
+    width: 100%;
+    max-width: 380px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+}
+
+.login-wrapper h1 {
+    font-size: 20px;
+    font-weight: 700;
+    text-align: center;
+    color: var(--color-text);
+    margin-bottom: 20px;
+}
+
+/* Form fields */
+fieldset {
+    border: none;
+}
+
+.input-wrapper {
+    position: relative;
+    margin-bottom: 14px;
+}
+
+.input-wrapper input {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 15px;
+    font-family: var(--font);
+    border: 2px solid var(--color-border);
+    border-radius: var(--border-radius);
+    background: var(--color-main-bg);
+    color: var(--color-text);
+    outline: none;
+    transition: border-color 0.15s;
+}
+
+.input-wrapper input:focus {
+    border-color: var(--color-primary);
+}
+
+.input-wrapper input::placeholder {
+    color: var(--color-text-light);
+    opacity: 1;
+}
+
+.input-wrapper .infield {
+    display: none;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--color-text-light);
+    padding: 4px;
+    display: flex;
+    align-items: center;
+}
+.toggle-password:hover { color: var(--color-text); }
+
+/* Submit button */
+.submit-wrapper {
+    margin-top: 18px;
+}
+
+.submit-wrapper button.primary {
+    width: 100%;
+    padding: 12px 20px;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: var(--font);
+    color: var(--color-primary-text);
+    background: var(--color-primary);
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: background 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 44px;
+}
+
+.submit-wrapper button.primary:hover {
+    background: var(--color-primary-hover);
+}
+
+.submit-wrapper button.primary:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+/* Loading spinner */
+.loading-spinner {
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Error message */
+.error-msg {
+    background: #fde8e8;
+    color: var(--color-error);
+    padding: 10px 14px;
+    border-radius: var(--border-radius);
+    font-size: 14px;
+    margin-bottom: 14px;
+    text-align: center;
+    border: 1px solid #f5c6c6;
+}
+
+/* Alternative logins */
+.alternative-logins {
+    text-align: center;
+    margin-top: 16px;
+}
+
+.lost-password {
+    color: var(--color-primary);
+    text-decoration: none;
+    font-size: 14px;
+}
+.lost-password:hover { text-decoration: underline; }
+
+/* Legal notice */
+.legal-notice {
+    margin-top: 20px;
+    text-align: center;
+}
+.legal-notice p {
+    color: rgba(255,255,255,0.7);
+    font-size: 13px;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 20px;
+}
+footer .info a {
+    color: rgba(255,255,255,0.6);
+    text-decoration: none;
+    font-size: 13px;
+}
+footer .info a:hover { color: rgba(255,255,255,0.9); }
+
+@media (max-width: 480px) {
+    .login-wrapper {
+        padding: 24px 20px;
+        margin: 0 10px;
+    }
+    .login-wrapper h1 { font-size: 18px; }
+}
