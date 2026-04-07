@@ -183,12 +183,13 @@ router.get('/me', subscriberAuth, async (req, res) => {
         );
 
         // Subscription link (всегда абсолютный URL для VPN-клиентов)
-        const panelDomain = process.env.PANEL_DOMAIN;
+        // Приоритет: panel_domain из настроек панели → PANEL_DOMAIN из env → заголовки запроса
+        const panelDomainSetting = await queryOne("SELECT value FROM settings WHERE key = 'panel_domain'");
+        const panelDomain = panelDomainSetting?.value || process.env.PANEL_DOMAIN;
         let subUrl;
         if (panelDomain) {
             subUrl = `https://${panelDomain}/api/sub/${sub_token}`;
         } else {
-            // Собираем URL из заголовков запроса
             const proto = req.headers['x-forwarded-proto'] || req.protocol || 'http';
             const host = req.headers['x-forwarded-host'] || req.headers['host'] || 'localhost';
             subUrl = `${proto}://${host}/api/sub/${sub_token}`;

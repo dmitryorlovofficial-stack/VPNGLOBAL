@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { X, Download, Copy, Check, QrCode, Link as LinkIcon, Rss } from 'lucide-react';
+import { settings as settingsApi } from '../api/client';
 import toast from 'react-hot-toast';
 import { clients } from '../api/client';
 
@@ -34,7 +35,24 @@ export default function QRModal({ clients: clientsList, onClose }) {
     const isXray = XRAY_PROTOCOLS.includes(activeClient.protocol);
     // Единая подписка для всех протоколов (общий sub_token)
     const subToken = clientsList.find(c => c.sub_token)?.sub_token;
-    const subUrl = subToken ? `${window.location.origin}/api/sub/${subToken}` : null;
+    const [subUrl, setSubUrl] = useState(null);
+
+    // Формируем URL подписки с учётом panel_domain из настроек
+    useEffect(() => {
+        if (!subToken) return;
+        settingsApi.get()
+            .then(cfg => {
+                const domain = cfg?.panel_domain;
+                if (domain) {
+                    setSubUrl(`https://${domain}/api/sub/${subToken}`);
+                } else {
+                    setSubUrl(`${window.location.origin}/api/sub/${subToken}`);
+                }
+            })
+            .catch(() => {
+                setSubUrl(`${window.location.origin}/api/sub/${subToken}`);
+            });
+    }, [subToken]);
 
     // Загрузка конфига/QR при смене активного клиента
     useEffect(() => {
