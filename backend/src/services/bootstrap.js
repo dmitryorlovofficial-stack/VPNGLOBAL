@@ -67,7 +67,7 @@ else:
     print('OK')
 " 2>/dev/null || echo "SKIP"`;
 
-        const result = await execSafe(script);
+        const result = await execRootSafe(script);
         if (result === 'CHANGED') {
             console.log('[BOOTSTRAP] Docker daemon.json: IPv6 + DNS настроены');
             await execRootSafe('systemctl restart docker 2>/dev/null; sleep 3');
@@ -79,7 +79,7 @@ else:
             // python3 нет — создаём конфиг напрямую
             console.log('[BOOTSTRAP] python3 не найден, создаём daemon.json вручную');
             await execRootSafe('mkdir -p /etc/docker');
-            const existing = await execSafe('cat /etc/docker/daemon.json 2>/dev/null');
+            const existing = await execRootSafe('cat /etc/docker/daemon.json 2>/dev/null');
             if (!existing || !existing.includes('ipv6')) {
                 await execRootSafe(`bash -c 'cat > /etc/docker/daemon.json << 'DEOF'
 {
@@ -167,6 +167,12 @@ DEOF`);
                 console.log('[BOOTSTRAP] Docker не найден, устанавливаем...');
                 await execRoot('bash -c "curl -fsSL https://get.docker.com | sh"');
                 await execRootSafe('systemctl enable docker');
+                // Добавляем текущего пользователя в группу docker (для не-root)
+                if (sudo) {
+                    const whoami = await execSafe('whoami');
+                    await execRootSafe(`usermod -aG docker ${whoami}`);
+                    console.log(`[BOOTSTRAP] Пользователь ${whoami} добавлен в группу docker`);
+                }
                 console.log('[BOOTSTRAP] Docker установлен');
             } else {
                 console.log(`[BOOTSTRAP] Docker найден: ${dockerVersion}`);
@@ -182,8 +188,13 @@ DEOF`);
             // 3. Собираем образ на сервере
             // Копируем файлы агента через SSH
             console.log('[BOOTSTRAP] Загружаем файлы агента...');
-            await execSafe('rm -rf /tmp/vpn-node-agent');
-            await exec('mkdir -p /tmp/vpn-node-agent/src/middleware /tmp/vpn-node-agent/src/routes /tmp/vpn-node-agent/src/services /tmp/vpn-node-agent/src/utils');
+            await execRootSafe('rm -rf /tmp/vpn-node-agent');
+            await execRoot('mkdir -p /tmp/vpn-node-agent/src/middleware /tmp/vpn-node-agent/src/routes /tmp/vpn-node-agent/src/services /tmp/vpn-node-agent/src/utils');
+            // Даём права текущему пользователю на /tmp/vpn-node-agent (для SFTP putFile)
+            if (sudo) {
+                const whoami = await execSafe('whoami');
+                await execRootSafe(`chown -R ${whoami}:${whoami} /tmp/vpn-node-agent`);
+            }
 
             // Загружаем файлы через putFile
             const agentDir = getAgentDir();
@@ -209,6 +220,9 @@ DEOF`);
             // 4. Генерируем API-ключ
             const apiKey = this.generateApiKey();
             const agentPort = server.agent_port || 8443;
+
+            // 4.5. Создаём директории для volume mounts (нужен root)
+            await execRootSafe('mkdir -p /usr/local/etc/xray /var/log/xray /var/www/stub-site /var/www/acme-challenge');
 
             // 5. Запускаем контейнер
             console.log('[BOOTSTRAP] Запускаем контейнер...');
