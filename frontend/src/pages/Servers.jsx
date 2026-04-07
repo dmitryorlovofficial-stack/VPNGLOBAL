@@ -1,5 +1,6 @@
 // Страница управления серверами — динамический CRUD + мониторинг
 import { useState, useEffect, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import {
     Server, RefreshCw, Power, Cpu, MemoryStick, HardDrive,
     Plus, Edit, Trash2, Search as SearchIcon, Wifi, Link2,
@@ -602,8 +603,8 @@ function StubSiteSection({ serverId }) {
             )}
 
             {/* Модалка получения SSL */}
-            {showSslModal && (
-                <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4" onClick={() => setShowSslModal(false)}>
+            {showSslModal && createPortal(
+                <div className="modal-overlay" onClick={() => setShowSslModal(false)}>
                     <div className="glass-card w-full max-w-sm" onClick={e => e.stopPropagation()}>
                         <div className="p-5 border-b border-dark-700 flex items-center justify-between">
                             <h3 className="text-lg font-semibold text-white flex items-center gap-2">
@@ -648,13 +649,14 @@ function StubSiteSection({ serverId }) {
                             </button>
                         </div>
                     </div>
-                </div>
+                </div>,
+                document.body
             )}
 
             {/* Модалка деплоя */}
-            {showDeploy && (
-                <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4" onClick={() => setShowDeploy(false)}>
-                    <div className="glass-card w-full max-w-lg max-h-[85vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+            {showDeploy && createPortal(
+                <div className="modal-overlay" onClick={() => setShowDeploy(false)}>
+                    <div className="modal-content max-w-lg max-h-[85vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
                         <div className="p-5 border-b border-dark-700 flex items-center justify-between">
                             <h3 className="text-lg font-semibold text-white">Сайт-заглушка</h3>
                             <button onClick={() => setShowDeploy(false)} className="text-gray-500 hover:text-white"><X className="w-5 h-5" /></button>
@@ -759,7 +761,8 @@ function StubSiteSection({ serverId }) {
                             </button>
                         </div>
                     </div>
-                </div>
+                </div>,
+                document.body
             )}
         </div>
     );

@@ -524,7 +524,73 @@ DEOF`);
                 );
             }
 
-            // 5. Финал — обновляем статус
+            // 5. Автосоздание VLESS Reality inbound (если нет ни одного)
+            try {
+                const xrayService = require('./xray');
+                const existingInbounds = await queryAll(
+                    "SELECT id FROM xray_inbounds WHERE server_id = $1 AND tag NOT LIKE 'chain-%'",
+                    [serverId]
+                );
+                if (existingInbounds.length === 0) {
+                    console.log(`[BOOTSTRAP] #${serverId}: Создаём VLESS Reality inbound на порту 443...`);
+                    const keys = await xrayService.generateRealityKeys(serverId);
+                    await xrayService.createInbound(serverId, {
+                        tag: 'vless-443',
+                        protocol: 'vless',
+                        port: 443,
+                        listen: '0.0.0.0',
+                        settings: { flow: 'xtls-rprx-vision' },
+                        stream_settings: {
+                            network: 'tcp',
+                            security: 'reality',
+                            realitySettings: {
+                                dest: 'www.google.com:443',
+                                serverNames: ['www.google.com'],
+                                privateKey: keys.privateKey,
+                                publicKey: keys.publicKey,
+                                shortIds: [xrayService.generateShortId()],
+                                fingerprint: 'chrome',
+                                spiderX: '/',
+                            },
+                        },
+                        sniffing: { enabled: true, destOverride: ['http', 'tls', 'quic'], routeOnly: true },
+                        remark: 'VLESS Reality',
+                    });
+                    console.log(`[BOOTSTRAP] #${serverId}: Inbound vless-443 создан`);
+                    await query(
+                        `INSERT INTO logs (level, category, server_id, message) VALUES ('info', 'xray', $1, $2)`,
+                        [serverId, 'Автоматически создан inbound VLESS Reality :443']
+                    );
+                }
+            } catch (err) {
+                console.warn(`[BOOTSTRAP] #${serverId}: Ошибка создания inbound:`, err.message);
+            }
+
+            // 6. Автодеплой stub site (GitLab шаблон)
+            try {
+                const stubService = require('./stub-site');
+                const existingStub = await queryOne('SELECT id FROM stub_sites WHERE server_id = $1', [serverId]);
+                if (!existingStub) {
+                    const serverData = await queryOne('SELECT domain, host FROM servers WHERE id = $1', [serverId]);
+                    const domain = serverData?.domain || serverData?.host || 'server';
+                    console.log(`[BOOTSTRAP] #${serverId}: Деплоим stub site (gitlab)...`);
+                    await stubService.deployStubSite(serverId, {
+                        templateId: 'gitlab',
+                        variables: { instance_name: 'GitLab', instance_url: domain },
+                        internalPort: 8444,
+                        autoUpdateDest: true,
+                    });
+                    console.log(`[BOOTSTRAP] #${serverId}: Stub site развёрнут`);
+                    await query(
+                        `INSERT INTO logs (level, category, server_id, message) VALUES ('info', 'stub', $1, $2)`,
+                        [serverId, 'Автоматически развёрнут stub site (GitLab)']
+                    );
+                }
+            } catch (err) {
+                console.warn(`[BOOTSTRAP] #${serverId}: Ошибка деплоя stub site:`, err.message);
+            }
+
+            // 7. Финал — обновляем статус
             await query(
                 "UPDATE servers SET status = 'online', agent_status = 'active', last_seen = NOW() WHERE id = $1",
                 [serverId]

@@ -205,7 +205,7 @@ export default function Routing() {
     }
 
     return (
-        <div className="h-full flex flex-col -m-4 lg:-m-6">
+        <div className="flex flex-col -m-4 lg:-m-6" style={{ height: 'calc(100vh - 2rem)' }}>
             {/* Toolbar */}
             <div className="flex items-center justify-between px-4 py-3 bg-dark-800 border-b border-dark-700 z-10">
                 <div className="flex items-center gap-3">

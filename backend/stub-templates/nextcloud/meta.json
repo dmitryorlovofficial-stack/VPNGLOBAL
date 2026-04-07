@@ -1,9 +1,0 @@
-{
-  "id": "nextcloud",
-  "name": "Nextcloud",
-  "description": "Форма авторизации Nextcloud — облачное хранилище",
-  "variables": {
-    "instance_name": "Nextcloud",
-    "instance_url": "cloud.example.com"
-  }
-}
