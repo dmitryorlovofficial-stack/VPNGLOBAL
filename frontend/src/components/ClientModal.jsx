@@ -1,6 +1,7 @@
 // Модальное окно создания/редактирования клиента (мульти-протокол)
 // При создании автоматически создаются VLESS-клиенты
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { X, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { clients, servers, xray, groups } from '../api/client';
@@ -9,6 +10,7 @@ const XRAY_PROTOCOLS = ['vless'];
 
 export default function ClientModal({ client, onClose, onSaved }) {
     const isEdit = !!client;
+    const initialFormRef = useRef(null);
     const [form, setForm] = useState({
         name: client?.name || '',
         note: client?.note || '',
@@ -25,6 +27,10 @@ export default function ClientModal({ client, onClose, onSaved }) {
     const [clientGroupList, setClientGroupList] = useState([]);
     // Режим создания: 'auto' (все протоколы) или 'manual' (один протокол)
     const [createMode, setCreateMode] = useState('auto');
+
+    useEffect(() => { if (!initialFormRef.current) initialFormRef.current = JSON.stringify(form); }, []);
+    const isDirty = () => initialFormRef.current && JSON.stringify(form) !== initialFormRef.current;
+    const handleClose = () => { if (isDirty() && !confirm('Есть несохранённые изменения. Закрыть?')) return; onClose(); };
 
     // Загружаем серверы и группы клиентов при открытии
     useEffect(() => {
@@ -146,14 +152,14 @@ export default function ClientModal({ client, onClose, onSaved }) {
         groupedInbounds[serverKey].inbounds.push(ib);
     }
 
-    return (
-        <div className="modal-overlay" onClick={onClose}>
+    return createPortal(
+        <div className="modal-overlay" onClick={handleClose}>
             <div className="modal-content" onClick={e => e.stopPropagation()}>
-                <div className="flex items-center justify-between p-5 border-b border-dark-600">
+                <div className="flex items-center justify-between p-5 border-b border-dark-600/50">
                     <h2 className="text-lg font-semibold text-white">
                         {isEdit ? 'Редактирование клиента' : 'Новый клиент'}
                     </h2>
-                    <button onClick={onClose} className="text-gray-400 hover:text-white">
+                    <button onClick={handleClose} className="text-gray-400 hover:text-white">
                         <X className="w-5 h-5" />
                     </button>
                 </div>
@@ -323,6 +329,7 @@ export default function ClientModal({ client, onClose, onSaved }) {
                     </div>
                 </form>
             </div>
-        </div>
+        </div>,
+        document.body
     );
 }

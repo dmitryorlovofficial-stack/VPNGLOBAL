@@ -1,5 +1,6 @@
 // Модальное окно с QR-кодом и конфигом/share link клиента (мульти-протокол)
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { X, Download, Copy, Check, QrCode, Link as LinkIcon, Rss } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { clients } from '../api/client';
@@ -76,7 +77,7 @@ export default function QRModal({ clients: clientsList, onClose }) {
         toast.success(isXray ? 'Share link скачан' : 'Конфиг скачан');
     };
 
-    return (
+    return createPortal(
         <div className="modal-overlay" onClick={onClose}>
             <div className="modal-content" onClick={e => e.stopPropagation()}>
                 {/* Заголовок */}
@@ -248,6 +249,7 @@ export default function QRModal({ clients: clientsList, onClose }) {
                     )}
                 </div>
             </div>
-        </div>
+        </div>,
+        document.body
     );
 }

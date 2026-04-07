@@ -1,5 +1,6 @@
 // Модальное окно добавления/редактирования сервера
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { X, Loader2, CheckCircle, XCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { servers } from '../api/client';
@@ -11,6 +12,7 @@ const AUTH_TYPES = [
 
 export default function ServerModal({ server, onClose, onSaved }) {
     const isEdit = !!server;
+    const initialFormRef = useRef(null);
     const [form, setForm] = useState({
         name: server?.name || '',
         description: server?.description || '',
@@ -28,6 +30,10 @@ export default function ServerModal({ server, onClose, onSaved }) {
     const [testing, setTesting] = useState(false);
 
     const set = (key, value) => setForm(f => ({ ...f, [key]: value }));
+
+    useEffect(() => { if (!initialFormRef.current) initialFormRef.current = JSON.stringify(form); }, []);
+    const isDirty = () => initialFormRef.current && JSON.stringify(form) !== initialFormRef.current;
+    const handleClose = () => { if (isDirty() && !confirm('Есть несохранённые изменения. Закрыть?')) return; onClose(); };
 
     const handleTest = async () => {
         setTesting(true);
@@ -94,14 +100,14 @@ export default function ServerModal({ server, onClose, onSaved }) {
         }
     };
 
-    return (
-        <div className="modal-overlay" onClick={onClose}>
+    return createPortal(
+        <div className="modal-overlay" onClick={handleClose}>
             <div className="modal-content max-w-xl" onClick={e => e.stopPropagation()}>
-                <div className="flex items-center justify-between p-5 border-b border-dark-600">
+                <div className="flex items-center justify-between p-5 border-b border-dark-600/50">
                     <h2 className="text-lg font-semibold text-white">
                         {isEdit ? 'Редактирование сервера' : 'Добавить сервер'}
                     </h2>
-                    <button onClick={onClose} className="text-gray-400 hover:text-white">
+                    <button onClick={handleClose} className="text-gray-400 hover:text-white">
                         <X className="w-5 h-5" />
                     </button>
                 </div>
@@ -267,6 +273,7 @@ export default function ServerModal({ server, onClose, onSaved }) {
                     </div>
                 </form>
             </div>
-        </div>
+        </div>,
+        document.body
     );
 }

@@ -1,5 +1,6 @@
 // Модальное окно создания/редактирования Xray inbound
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { X, Key, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { xray } from '../api/client';
@@ -13,6 +14,7 @@ const SECURITIES = ['none', 'tls', 'reality'];
 
 export default function InboundModal({ serverId, inbound, onClose, onSaved }) {
     const isEdit = !!inbound;
+    const initialFormRef = useRef(null);
 
     const [form, setForm] = useState({
         tag: inbound?.tag || '',
@@ -52,6 +54,20 @@ export default function InboundModal({ serverId, inbound, onClose, onSaved }) {
     });
     const [loading, setLoading] = useState(false);
     const [generatingKeys, setGeneratingKeys] = useState(false);
+
+    // Сохраняем начальное состояние для проверки изменений
+    useEffect(() => {
+        if (!initialFormRef.current) initialFormRef.current = JSON.stringify(form);
+    }, []);
+
+    const isDirty = () => initialFormRef.current && JSON.stringify(form) !== initialFormRef.current;
+
+    const handleClose = () => {
+        if (isDirty()) {
+            if (!confirm('Есть несохранённые изменения. Закрыть без сохранения?')) return;
+        }
+        onClose();
+    };
 
     // Авто-генерация tag из протокола и порта
     useEffect(() => {
@@ -176,14 +192,14 @@ export default function InboundModal({ serverId, inbound, onClose, onSaved }) {
     const inputClass = 'w-full bg-dark-700/50 border border-dark-600/80 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-accent-500';
     const labelClass = 'block text-xs font-medium text-gray-400 mb-1';
 
-    return (
-        <div className="modal-overlay" onClick={onClose}>
+    return createPortal(
+        <div className="modal-overlay" onClick={handleClose}>
             <div className="modal-content max-w-2xl max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
-                <div className="flex items-center justify-between p-5 border-b border-dark-600 sticky top-0 bg-dark-800 z-10">
+                <div className="flex items-center justify-between p-5 border-b border-dark-600/50 sticky top-0 bg-dark-800/95 backdrop-blur-md z-10">
                     <h2 className="text-lg font-semibold text-white">
                         {isEdit ? 'Редактировать Inbound' : 'Новый Inbound'}
                     </h2>
-                    <button onClick={onClose} className="text-gray-400 hover:text-white">
+                    <button onClick={handleClose} className="text-gray-400 hover:text-white">
                         <X className="w-5 h-5" />
                     </button>
                 </div>
@@ -519,7 +535,7 @@ export default function InboundModal({ serverId, inbound, onClose, onSaved }) {
                     <div className="flex gap-3 pt-2">
                         <button
                             type="button"
-                            onClick={onClose}
+                            onClick={handleClose}
                             className="flex-1 px-4 py-2.5 bg-dark-700 text-gray-300 rounded-lg text-sm font-medium hover:bg-dark-600"
                         >
                             Отмена
@@ -534,6 +550,7 @@ export default function InboundModal({ serverId, inbound, onClose, onSaved }) {
                     </div>
                 </form>
             </div>
-        </div>
+        </div>,
+        document.body
     );
 }

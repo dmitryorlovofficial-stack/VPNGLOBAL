@@ -1055,12 +1055,6 @@ export default function Servers() {
                 </div>
                 <div className="flex items-center gap-2">
                     <button
-                        onClick={fetchServers}
-                        className="flex items-center gap-2 px-3 py-2 bg-dark-700 text-gray-300 rounded-lg text-sm hover:bg-dark-600"
-                    >
-                        <RefreshCw className="w-4 h-4" /> Обновить
-                    </button>
-                    <button
                         onClick={() => { setEditServer(null); setShowModal(true); }}
                         className="flex items-center gap-2 px-4 py-2 btn-primary transition-colors"
                     >
