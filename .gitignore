@@ -1,3 +1,21 @@
+# Окружение
 .env
-node_modules
+.setup.conf
+
+# Зависимости
+node_modules/
+
+# Runtime данные
+backend/data/
+configs/
+
+# Сборка
+dist/
+*.tsbuildinfo
+
+# Логи
 *.log
+
+# OS
+.DS_Store
+Thumbs.db

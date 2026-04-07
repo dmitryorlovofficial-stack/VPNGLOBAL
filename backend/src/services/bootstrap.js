@@ -324,6 +324,12 @@ DEOF`);
 
         try {
             const ssh = await sshManager.connect(serverId);
+            const sudo = await this._getSudo(ssh, server);
+            const execRoot = async (cmd) => {
+                const r = await ssh.execCommand(sudo + cmd, { cwd: '/' });
+                if (r.stderr && !r.stdout && r.code !== 0) throw new Error(r.stderr);
+                return r.stdout.trim();
+            };
             const exec = async (cmd) => {
                 const r = await ssh.execCommand(cmd, { cwd: '/' });
                 return r.stdout.trim();
@@ -408,8 +414,10 @@ DEOF`);
 
         try {
             const ssh = await sshManager.connect(serverId);
-            const exec = async (cmd) => {
-                const r = await ssh.execCommand(cmd, { cwd: '/' });
+            const sudo = await this._getSudo(ssh, server);
+            const execRoot = async (cmd) => {
+                const r = await ssh.execCommand(sudo + cmd, { cwd: '/' });
+                if (r.stderr && !r.stdout && r.code !== 0) throw new Error(r.stderr);
                 return r.stdout.trim();
             };
 
