@@ -581,7 +581,7 @@ function buildInboundConfig(inbound, clients, serverDomain) {
                     };
                     const network = (inbound.stream_settings || {}).network;
                     const isChainClient = (c.name || '').startsWith('chain-');
-                    if (settings.flow && network !== 'xhttp' && !isChainClient) client.flow = settings.flow;
+                    if (settings.flow && !isChainClient) client.flow = settings.flow;
                     return client;
                 }),
             };
@@ -1283,9 +1283,7 @@ async function generateShareLink(clientId) {
 
     // TCP+Vision — не трогаем network, оставляем как есть
 
-    const settings = streamSettings.network === 'xhttp'
-        ? { ...(effectiveInbound.settings || {}), flow: '' }
-        : (effectiveInbound.settings || {});
+    const settings = effectiveInbound.settings || {};
     const remark = encodeURIComponent(client.name);
 
     switch (effectiveInbound.protocol) {
@@ -1415,15 +1413,7 @@ async function generateShareLinks(clientId) {
         streamSettings = effectiveInbound.stream_settings || {};
     }
 
-    if (effectiveInbound.protocol == "vless" && streamSettings.security == "reality") {
-        if (!streamSettings.network || streamSettings.network == "tcp") {
-            if (!streamSettings.xhttpSettings) streamSettings.xhttpSettings = { path: "/", mode: "auto" };
-        }
-    }
-
-    const settings = streamSettings.network === 'xhttp'
-        ? { ...(effectiveInbound.settings || {}), flow: '' }
-        : (effectiveInbound.settings || {});
+    const settings = effectiveInbound.settings || {};
 
     // Генерируем link для каждого SNI
     const links = [];
@@ -1459,7 +1449,7 @@ function buildVlessLink(client, address, port, stream, settings, remark, sniOver
     params.set('security', security);
 
     // Flow (XTLS) — XHTTP несовместим с flow
-    if (settings.flow && network !== 'xhttp') {
+    if (settings.flow) {
         params.set('flow', settings.flow);
     }
 
@@ -1557,19 +1547,6 @@ function buildChainOutbound(chain, endpoint) {
         }
     }
 
-    if (cleanStream.security == "reality" && (!cleanStream.network || cleanStream.network == "tcp")) {
-        // cleanStream.network = "xhttp"; // DISABLED for TCP+Vision
-        if (!cleanStream.xhttpSettings) cleanStream.xhttpSettings = { path: "/", mode: "auto" };
-    }
-
-    if (cleanStream.network === 'xhttp' && cleanStream.xhttpSettings) {
-        const xh = cleanStream.xhttpSettings;
-        if (!xh.scMaxEachPostBytes) xh.scMaxEachPostBytes = '500000-1000000';
-        if (!xh.scMaxConcurrentPosts) xh.scMaxConcurrentPosts = '50-100';
-        if (!xh.scMinPostsIntervalMs) xh.scMinPostsIntervalMs = '10-30';
-        // Chain: stream-up (постоянный поток, оптимально для видео/UDP)
-        // chain mode auto
-    }
 
     const outbound = {
         tag,
@@ -1587,7 +1564,7 @@ function buildChainOutbound(chain, endpoint) {
                 encryption: 'none',
             };
             // flow для tcp/reality (xtls-rprx-vision)
-            if (settings.flow && cleanStream.network !== 'xhttp') user.flow = settings.flow;
+            if (settings.flow) user.flow = settings.flow;
             outbound.settings = {
                 vnext: [{
                     address: endpoint,

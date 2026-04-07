@@ -9,7 +9,7 @@ const PROTOCOLS = [
     { value: 'vless', label: 'VLESS', desc: 'Лёгкий, поддержка Reality/XTLS' },
 ];
 
-const TRANSPORTS = ['xhttp', 'ws', 'grpc', 'h2'];
+const TRANSPORTS = ['tcp', 'ws', 'grpc', 'h2'];
 const SECURITIES = ['none', 'tls', 'reality'];
 
 export default function InboundModal({ serverId, inbound, onClose, onSaved }) {
@@ -40,15 +40,11 @@ export default function InboundModal({ serverId, inbound, onClose, onSaved }) {
         realitySpiderX: inbound?.stream_settings?.realitySettings?.spiderX || '/',
         // SNI list для мульти-SNI подписки (разные операторы)
         sniList: (inbound?.sni_list || []).join(', '),
-        // WebSocket
+        // WebSocket (TCP не имеет дополнительных настроек)
         wsPath: inbound?.stream_settings?.wsSettings?.path || '/',
         wsHost: inbound?.stream_settings?.wsSettings?.headers?.Host || '',
         // gRPC
         grpcServiceName: inbound?.stream_settings?.grpcSettings?.serviceName || '',
-        // XHTTP
-        xhttpPath: inbound?.stream_settings?.xhttpSettings?.path || '/',
-        xhttpHost: inbound?.stream_settings?.xhttpSettings?.host || '',
-        xhttpMode: inbound?.stream_settings?.xhttpSettings?.mode || 'auto',
         // Sniffing
         sniffingEnabled: inbound?.sniffing?.enabled !== false,
     });
@@ -104,7 +100,7 @@ export default function InboundModal({ serverId, inbound, onClose, onSaved }) {
         try {
             // Собираем settings
             const settings = {};
-            if (form.protocol === 'vless' && form.flow && form.network !== 'xhttp') settings.flow = form.flow;
+            if (form.protocol === 'vless' && form.flow) settings.flow = form.flow;
 
             let stream_settings = {
                 network: form.network,
@@ -143,12 +139,6 @@ export default function InboundModal({ serverId, inbound, onClose, onSaved }) {
                 } else if (form.network === 'grpc') {
                     stream_settings.grpcSettings = {
                         serviceName: form.grpcServiceName,
-                    };
-                } else if (form.network === 'xhttp') {
-                    stream_settings.xhttpSettings = {
-                        path: form.xhttpPath || '/',
-                        host: form.xhttpHost || undefined,
-                        mode: form.xhttpMode || 'auto',
                     };
                 }
 
@@ -286,17 +276,14 @@ export default function InboundModal({ serverId, inbound, onClose, onSaved }) {
                         <div>
                             <label className={labelClass}>Flow (XTLS)</label>
                             <select
-                                value={form.network === 'xhttp' ? '' : form.flow}
+                                value={form.flow}
                                 onChange={e => setForm({ ...form, flow: e.target.value })}
                                 className={inputClass}
-                                disabled={form.network === 'xhttp'}
+                                disabled={false}
                             >
                                 <option value="">Без Flow</option>
                                 <option value="xtls-rprx-vision">xtls-rprx-vision</option>
                             </select>
-                            {form.network === 'xhttp' && (
-                                <p className="text-xs text-dark-400 mt-1">XHTTP несовместим с Flow</p>
-                            )}
                         </div>
                     )}
 
@@ -472,42 +459,6 @@ export default function InboundModal({ serverId, inbound, onClose, onSaved }) {
                         </div>
                     )}
 
-                    {/* XHTTP settings */}
-                    {form.network === 'xhttp' && (
-                        <div className="grid grid-cols-3 gap-3">
-                            <div>
-                                <label className={labelClass}>XHTTP Path</label>
-                                <input
-                                    value={form.xhttpPath}
-                                    onChange={e => setForm({ ...form, xhttpPath: e.target.value })}
-                                    className={inputClass}
-                                    placeholder="/"
-                                />
-                            </div>
-                            <div>
-                                <label className={labelClass}>XHTTP Host</label>
-                                <input
-                                    value={form.xhttpHost}
-                                    onChange={e => setForm({ ...form, xhttpHost: e.target.value })}
-                                    className={inputClass}
-                                    placeholder=""
-                                />
-                            </div>
-                            <div>
-                                <label className={labelClass}>Mode</label>
-                                <select
-                                    value={form.xhttpMode}
-                                    onChange={e => setForm({ ...form, xhttpMode: e.target.value })}
-                                    className={inputClass}
-                                >
-                                    <option value="auto">auto</option>
-                                    <option value="packet-up">packet-up</option>
-                                    <option value="stream-up">stream-up</option>
-                                    <option value="stream-one">stream-one</option>
-                                </select>
-                            </div>
-                        </div>
-                    )}
 
                     {/* Remark */}
                     <div>
