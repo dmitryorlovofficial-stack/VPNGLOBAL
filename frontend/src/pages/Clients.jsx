@@ -537,7 +537,7 @@ export default function Clients() {
         return 'offline';
     };
 
-    const colCount = isAdmin ? 10 : 8;
+    const colCount = isAdmin ? 8 : 7;
 
     return (
         <div className="space-y-4 animate-fade-in">
@@ -573,14 +573,6 @@ export default function Clients() {
                     <option value="active">Активные</option>
                     <option value="online">Онлайн</option>
                     <option value="blocked">Заблокированные</option>
-                </select>
-                <select
-                    value={protoFilter}
-                    onChange={e => { setProtoFilter(e.target.value); setPage(1); }}
-                    className="bg-dark-800 border border-dark-700 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-accent-500"
-                >
-                    <option value="">Все протоколы</option>
-                    <option value="vless">VLESS</option>
                 </select>
                 {isAdmin && clientGroupList.length > 0 && (
                     <select
@@ -634,12 +626,10 @@ export default function Clients() {
                                     />
                                 </th>
                                 <th className="p-3 text-left text-xs font-medium text-gray-400 uppercase">Имя</th>
-                                <th className="p-3 text-left text-xs font-medium text-gray-400 uppercase">Протоколы</th>
-                                {isAdmin && <th className="p-3 text-left text-xs font-medium text-gray-400 uppercase">Владелец</th>}
+                                <th className="p-3 text-left text-xs font-medium text-gray-400 uppercase">Email</th>
                                 {isAdmin && <th className="p-3 text-left text-xs font-medium text-gray-400 uppercase">Группа</th>}
                                 <th className="p-3 text-left text-xs font-medium text-gray-400 uppercase">Статус</th>
                                 <th className="p-3 text-left text-xs font-medium text-gray-400 uppercase">Трафик</th>
-                                <th className="p-3 text-left text-xs font-medium text-gray-400 uppercase">Внешний IP</th>
                                 <th className="p-3 text-center text-xs font-medium text-gray-400 uppercase">Устройства</th>
                                 <th className="p-3 text-right text-xs font-medium text-gray-400 uppercase">Действия</th>
                             </tr>
@@ -683,14 +673,9 @@ export default function Clients() {
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td className="p-3">
-                                                <div className="flex gap-1 flex-wrap">
-                                                    {g.clients.map(c => (
-                                                        <ProtocolBadge key={c.id} protocol={c.protocol} />
-                                                    ))}
-                                                </div>
+                                            <td className="p-3 text-xs text-gray-400 truncate max-w-[200px]">
+                                                {g.clients[0]?.email || '—'}
                                             </td>
-                                            {isAdmin && <td className="p-3 text-gray-400 text-xs">{g.owner_username || '—'}</td>}
                                             {isAdmin && (
                                                 <td className="p-3">
                                                     {g.client_group_name ? (
@@ -709,9 +694,6 @@ export default function Clients() {
                                                     {' / '}
                                                     <span className="text-accent-400">↓{fmtBytes(g.download_bytes)}</span>
                                                 </div>
-                                            </td>
-                                            <td className="p-3 text-xs text-gray-300 font-mono">
-                                                {g.endpoint ? g.endpoint.replace(/:\d+$/, '') : '\u2014'}
                                             </td>
                                             <td className="p-3 text-center">
                                                 <button

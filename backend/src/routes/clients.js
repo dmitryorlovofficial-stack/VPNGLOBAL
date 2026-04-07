@@ -125,7 +125,7 @@ router.post('/', [
         }
     }
 
-    const { name, note, dns, server_id, protocol, xray_inbound_id, client_group_id, auto_all } = req.body;
+    const { name, note, dns, email, server_id, protocol, xray_inbound_id, client_group_id, auto_all } = req.body;
 
     try {
         // ==================== Авто-создание всех протоколов ====================
@@ -165,9 +165,9 @@ router.post('/', [
             if (vlessInbound) {
                 const uuid = crypto.randomUUID();
                 const cl = await queryOne(
-                    `INSERT INTO clients (name, note, protocol, server_id, xray_inbound_id, xray_uuid, xray_email, owner_id, sub_token, client_group_id)
-                     VALUES ($1, $2, 'vless', $3, $4, $5, $6, $7, $8, $9) RETURNING *`,
-                    [name, note || null, vlessInbound.server_id, vlessInbound.id, uuid, `${name}@vpn`, req.user.id, sharedSubToken, client_group_id || null]
+                    `INSERT INTO clients (name, note, email, protocol, server_id, xray_inbound_id, xray_uuid, xray_email, owner_id, sub_token, client_group_id)
+                     VALUES ($1, $2, $3, 'vless', $4, $5, $6, $7, $8, $9, $10) RETURNING *`,
+                    [name, note || null, email || null, vlessInbound.server_id, vlessInbound.id, uuid, `${name}@vpn`, req.user.id, sharedSubToken, client_group_id || null]
                 );
                 createdClients.push(cl);
                 serversToRedeploy.add(vlessInbound.server_id);
@@ -212,10 +212,10 @@ router.post('/', [
             const subToken = crypto.randomBytes(16).toString('hex');
 
             const client = await queryOne(
-                `INSERT INTO clients (name, note, protocol, server_id, xray_inbound_id, xray_uuid, xray_email, owner_id, sub_token, client_group_id)
-                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+                `INSERT INTO clients (name, note, email, protocol, server_id, xray_inbound_id, xray_uuid, xray_email, owner_id, sub_token, client_group_id)
+                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
                  RETURNING *`,
-                [name, note || null, inbound.protocol, inbound.server_id, xray_inbound_id, uuid, xrayEmail, req.user.id, subToken, client_group_id || null]
+                [name, note || null, email || null, inbound.protocol, inbound.server_id, xray_inbound_id, uuid, xrayEmail, req.user.id, subToken, client_group_id || null]
             );
 
             // Деплоим обновлённый конфиг на сервер (+ Entry-серверы)
@@ -271,14 +271,15 @@ router.put('/:id', [
         return res.status(403).json({ error: 'Нет доступа' });
     }
 
-    const { name, note, dns } = req.body;
+    const { name, note, dns, email } = req.body;
     const updated = await queryOne(
         `UPDATE clients SET
             name = COALESCE($1, name),
             note = COALESCE($2, note),
-            dns = COALESCE($3, dns)
-         WHERE id = $4 RETURNING *`,
-        [name || null, note || null, dns || null, req.params.id]
+            dns = COALESCE($3, dns),
+            email = COALESCE($4, email)
+         WHERE id = $5 RETURNING *`,
+        [name || null, note || null, dns || null, email !== undefined ? (email || null) : undefined, req.params.id]
     );
 
     // Если Xray клиент — обновляем email и деплоим

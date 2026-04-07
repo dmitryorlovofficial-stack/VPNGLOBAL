@@ -13,6 +13,7 @@ export default function ClientModal({ client, onClose, onSaved }) {
     const initialFormRef = useRef(null);
     const [form, setForm] = useState({
         name: client?.name || '',
+        email: client?.email || '',
         note: client?.note || '',
         dns: client?.dns || '',
         protocol: client?.protocol || 'vless',
@@ -25,7 +26,6 @@ export default function ClientModal({ client, onClose, onSaved }) {
     const [allInbounds, setAllInbounds] = useState([]);
     const [loadingInbounds, setLoadingInbounds] = useState(false);
     const [clientGroupList, setClientGroupList] = useState([]);
-    // Режим создания: 'auto' (все протоколы) или 'manual' (один протокол)
     const [createMode, setCreateMode] = useState('auto');
 
     useEffect(() => { if (!initialFormRef.current) initialFormRef.current = JSON.stringify(form); }, []);
@@ -69,14 +69,15 @@ export default function ClientModal({ client, onClose, onSaved }) {
             if (isEdit) {
                 await clients.update(client.id, {
                     name: form.name,
+                    email: form.email,
                     note: form.note,
                     dns: form.dns,
                 });
                 toast.success('Клиент обновлён');
             } else if (createMode === 'auto') {
-                // Автоматическое создание всех протоколов
                 const payload = {
                     name: form.name,
+                    email: form.email || undefined,
                     note: form.note,
                     auto_all: true,
                 };
@@ -233,6 +234,18 @@ export default function ClientModal({ client, onClose, onSaved }) {
                             onChange={e => setForm({ ...form, name: e.target.value })}
                             className={inputClass}
                             placeholder="Например: iPhone Иванов"
+                        />
+                    </div>
+
+                    {/* Email */}
+                    <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-1.5">Email</label>
+                        <input
+                            type="email"
+                            value={form.email}
+                            onChange={e => setForm({ ...form, email: e.target.value })}
+                            className={inputClass}
+                            placeholder="user@example.com"
                         />
                     </div>
 
