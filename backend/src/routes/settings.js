@@ -32,6 +32,28 @@ router.put('/', adminOnly, async (req, res) => {
             }
         });
 
+        // Если обновлён panel_domain — синхронизируем ssl.env
+        if (updates.panel_domain !== undefined) {
+            try {
+                const fs = require('fs');
+                const sslEnvPath = '/app/configs/ssl.env';
+                const domain = updates.panel_domain || '';
+                // Читаем текущий ssl.env (если есть)
+                let sslEnabled = 'false';
+                try {
+                    const content = fs.readFileSync(sslEnvPath, 'utf8');
+                    const match = content.match(/SSL_ENABLED=(\w+)/);
+                    if (match) sslEnabled = match[1];
+                } catch {}
+                // Обновляем ssl.env с новым доменом
+                fs.mkdirSync('/app/configs', { recursive: true });
+                fs.writeFileSync(sslEnvPath, `SSL_ENABLED=${sslEnabled}\nPANEL_DOMAIN=${domain}\n`);
+                console.log(`[SETTINGS] ssl.env обновлён: PANEL_DOMAIN=${domain}`);
+            } catch (err) {
+                console.warn('[SETTINGS] Не удалось обновить ssl.env:', err.message);
+            }
+        }
+
         await query(
             `INSERT INTO logs (level, category, message, details)
              VALUES ('info', 'system', 'Настройки обновлены', $1)`,
