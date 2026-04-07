@@ -667,6 +667,22 @@ function buildInboundConfig(inbound, clients, serverDomain) {
  * @param {boolean} [options.force] — пропустить проверку хеша (принудительный редеплой)
  */
 async function deployConfig(serverId, options = {}) {
+    // Автофикс: XHTTP несовместим с xtls-rprx-vision → сменить на TCP
+    const xhttpWithFlow = await queryAll(
+        `SELECT id, stream_settings, settings FROM xray_inbounds
+         WHERE server_id = $1 AND stream_settings->>'network' = 'xhttp'
+           AND settings->>'flow' = 'xtls-rprx-vision'`,
+        [serverId]
+    );
+    for (const ib of xhttpWithFlow) {
+        const ss = ib.stream_settings || {};
+        ss.network = 'tcp';
+        delete ss.xhttpSettings;
+        await query('UPDATE xray_inbounds SET stream_settings = $1 WHERE id = $2',
+            [JSON.stringify(ss), ib.id]);
+        console.log(`[XRAY] Автофикс: inbound #${ib.id} XHTTP→TCP (несовместим с Vision flow)`);
+    }
+
     // Автоподстановка домена сервера в Reality serverNames
     const server = await queryOne('SELECT domain FROM servers WHERE id = $1', [serverId]);
     if (server?.domain) {
