@@ -620,26 +620,10 @@ function buildInboundConfig(inbound, clients, serverDomain) {
         delete cleanStream.network;
     }
 
-    // VLESS + Reality — XHTTP по-умолчанию (максимальная маскировка, трафик неотличим от HTTPS)
-    // TCP допускается только если явно указан другой транспорт (ws, grpc, h2)
-    if (inbound.protocol === 'vless' && cleanStream.security === 'reality') {
-        if (!cleanStream.network || cleanStream.network == "tcp") {
-            // cleanStream.network = "xhttp"; // DISABLED for TCP+Vision
-        }
-        // Добавляем дефолтные xhttpSettings если отсутствуют
-        if (cleanStream.network === 'xhttp' && !cleanStream.xhttpSettings) {
-        }
-        // xHTTP host (если xhttp используется)
-        if (cleanStream.network === 'xhttp' && cleanStream.xhttpSettings && !cleanStream.xhttpSettings.host) {
-            const sn = cleanStream.realitySettings?.serverNames?.[0];
-            if (sn) cleanStream.xhttpSettings.host = sn;
-        }
-        // Убираем quic из sniffing если есть
-        // quic оставляем в destOverride
-
-        // На сервере вызывает invalid padding, убираем из deployed конфига
-        if (cleanStream.xhttpSettings) {
-        }
+    // XHTTP: автозаполнение host если не задан
+    if (cleanStream.network === 'xhttp' && cleanStream.xhttpSettings && !cleanStream.xhttpSettings.host) {
+        const sn = cleanStream.realitySettings?.serverNames?.[0];
+        if (sn) cleanStream.xhttpSettings.host = sn;
     }
 
     const result = {
@@ -1297,12 +1281,7 @@ async function generateShareLink(clientId) {
         streamSettings = effectiveInbound.stream_settings || {};
     }
 
-    if (effectiveInbound.protocol == "vless" && streamSettings.security == "reality") {
-        if (!streamSettings.network || streamSettings.network == "tcp") {
-            // streamSettings.network = "xhttp"; // DISABLED for TCP+Vision
-            if (!streamSettings.xhttpSettings) streamSettings.xhttpSettings = { path: "/", mode: "auto" };
-        }
-    }
+    // TCP+Vision — не трогаем network, оставляем как есть
 
     const settings = streamSettings.network === 'xhttp'
         ? { ...(effectiveInbound.settings || {}), flow: '' }
