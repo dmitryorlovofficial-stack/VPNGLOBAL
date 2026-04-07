@@ -345,13 +345,13 @@ router.get('/:token', async (req, res) => {
             `upload=${totalUpload}; download=${totalDownload}; total=${totalLimit}; expire=${earliestExpire}`
         );
 
-        // Собираем share links для всех Xray-протоколов
+        // Собираем share links для всех Xray-протоколов (с мульти-SNI)
         const links = [];
         for (const c of activeClients) {
             if (XRAY_PROTOCOLS.includes(c.protocol) && c.xray_inbound_id) {
                 try {
-                    const link = await xrayService.generateShareLink(c.id);
-                    if (link) links.push(link);
+                    const multiLinks = await xrayService.generateShareLinks(c.id);
+                    if (multiLinks) links.push(...multiLinks);
                 } catch {}
             }
         }

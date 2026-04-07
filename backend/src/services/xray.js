@@ -582,6 +582,13 @@ function buildInboundConfig(inbound, clients, serverDomain) {
         if (serverDomain && !sNames.includes(serverDomain)) {
             sNames.unshift(serverDomain);
         }
+        // Добавляем домены из sni_list (мульти-SNI для подписки)
+        const sniList = Array.isArray(inbound.sni_list) ? inbound.sni_list : [];
+        for (const sni of sniList) {
+            if (sni && !sNames.includes(sni)) {
+                sNames.push(sni);
+            }
+        }
         cleanStream.realitySettings = {
             dest: rs.dest || 'www.google.com:443',
             serverNames: sNames,
@@ -779,7 +786,7 @@ async function getInbound(inboundId) {
 }
 
 async function createInbound(serverId, data) {
-    const { tag, protocol, port, listen, settings, stream_settings, sniffing, remark } = data;
+    const { tag, protocol, port, listen, settings, stream_settings, sniffing, remark, sni_list } = data;
 
     // Валидация
     if (!tag || !protocol || !port) {
@@ -836,8 +843,8 @@ async function createInbound(serverId, data) {
     }
 
     const inbound = await queryOne(
-        `INSERT INTO xray_inbounds (server_id, tag, protocol, port, listen, settings, stream_settings, sniffing, remark)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+        `INSERT INTO xray_inbounds (server_id, tag, protocol, port, listen, settings, stream_settings, sniffing, remark, sni_list)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
          ON CONFLICT (server_id, tag) DO UPDATE SET
             protocol = EXCLUDED.protocol,
             port = EXCLUDED.port,
@@ -846,12 +853,14 @@ async function createInbound(serverId, data) {
             stream_settings = EXCLUDED.stream_settings,
             sniffing = EXCLUDED.sniffing,
             remark = EXCLUDED.remark,
+            sni_list = EXCLUDED.sni_list,
             is_enabled = TRUE
          RETURNING *`,
         [serverId, tag, protocol, port, listen || '0.0.0.0',
          JSON.stringify(finalSettings), JSON.stringify(finalStreamSettings),
          JSON.stringify(sniffing || { enabled: true, destOverride: ['http', 'tls', 'quic'], routeOnly: true }),
-         remark || null]
+         remark || null,
+         JSON.stringify(sni_list || [])]
     );
 
     // Если мигрировали chain — привязываем chain-клиентов к новому инбаунду
@@ -948,7 +957,7 @@ async function updateInbound(inboundId, data) {
     }
 
     // JSONB поля
-    const jsonFields = ['settings', 'stream_settings', 'sniffing'];
+    const jsonFields = ['settings', 'stream_settings', 'sniffing', 'sni_list'];
     for (const f of jsonFields) {
         if (data[f] !== undefined) {
             fields.push(`${f} = $${idx++}`);
@@ -1269,7 +1278,144 @@ async function generateShareLink(clientId) {
     }
 }
 
-function buildVlessLink(client, address, port, stream, settings, remark) {
+/**
+ * Генерация нескольких share links с разными SNI (для подписки).
+ * Если у inbound заполнен sni_list — создаёт отдельный vless:// для каждого SNI.
+ * Если sni_list пустой — возвращает один стандартный link.
+ */
+async function generateShareLinks(clientId) {
+    const client = await queryOne('SELECT * FROM clients WHERE id = $1', [clientId]);
+    if (!client) throw new Error('Клиент не найден');
+    if (!client.xray_inbound_id) throw new Error('Клиент не привязан к Xray inbound');
+
+    const inbound = await queryOne('SELECT * FROM xray_inbounds WHERE id = $1', [client.xray_inbound_id]);
+    if (!inbound) throw new Error('Inbound не найден');
+
+    const sniList = Array.isArray(inbound.sni_list) ? inbound.sni_list.filter(s => s) : [];
+
+    // Если sni_list пустой — обычная генерация одного link
+    if (sniList.length === 0) {
+        const link = await generateShareLink(clientId);
+        return [link];
+    }
+
+    // Повторяем логику generateShareLink для получения address, port, streamSettings, settings
+    const server = await queryOne('SELECT * FROM servers WHERE id = $1', [inbound.server_id]);
+    if (!server) throw new Error('Сервер не найден');
+
+    let address;
+    let viaEntry = false;
+    let effectiveInbound = inbound;
+
+    // Entry server lookup via client group (копия из generateShareLink)
+    if (client.client_group_id) {
+        const group = await queryOne(
+            'SELECT cg.server_group_id FROM client_groups cg WHERE cg.id = $1',
+            [client.client_group_id]
+        );
+        if (group?.server_group_id) {
+            let entries = await queryAll(
+                `SELECT s.* FROM server_group_members sgm
+                 JOIN servers s ON s.id = sgm.server_id
+                 WHERE sgm.server_group_id = $1 AND sgm.role = 'entry'
+                   AND s.status = 'online'
+                 ORDER BY s.id`,
+                [group.server_group_id]
+            );
+            if (entries.length === 0) {
+                entries = await queryAll(
+                    `SELECT s.* FROM server_group_members sgm
+                     JOIN servers s ON s.id = sgm.server_id
+                     WHERE sgm.server_group_id = $1 AND sgm.role = 'entry'
+                     ORDER BY s.id`,
+                    [group.server_group_id]
+                );
+            }
+            if (entries.length > 0) {
+                const entryServer = entries[client.id % entries.length];
+                address = entryServer.domain || entryServer.ipv4;
+                viaEntry = true;
+
+                if (inbound.server_id !== entryServer.id) {
+                    const entryInbound = await queryOne(
+                        `SELECT * FROM xray_inbounds
+                         WHERE server_id = $1 AND protocol = $2 AND port = $3
+                           AND tag NOT LIKE 'chain-%' AND is_enabled = TRUE
+                         LIMIT 1`,
+                        [entryServer.id, inbound.protocol, inbound.port]
+                    );
+                    if (!entryInbound) {
+                        const fallbackInbound = await queryOne(
+                            `SELECT * FROM xray_inbounds
+                             WHERE server_id = $1 AND protocol = $2
+                               AND tag NOT LIKE 'chain-%' AND is_enabled = TRUE
+                             ORDER BY port LIMIT 1`,
+                            [entryServer.id, inbound.protocol]
+                        );
+                        if (fallbackInbound) effectiveInbound = fallbackInbound;
+                    } else {
+                        effectiveInbound = entryInbound;
+                    }
+                }
+            }
+        }
+    }
+
+    // Legacy path via server_links
+    if (!address) {
+        const entryServer = await queryOne(
+            `SELECT s.* FROM server_links sl
+             JOIN servers s ON s.id = sl.from_server_id
+             WHERE sl.to_server_id = $1 AND sl.link_type = 'xray' AND sl.status = 'active'
+             ORDER BY sl.created_at DESC LIMIT 1`,
+            [server.id]
+        );
+        viaEntry = !!entryServer;
+        const linkServer = entryServer || server;
+        address = linkServer.domain || linkServer.ipv4;
+    }
+
+    const port = effectiveInbound.port;
+
+    let streamSettings;
+    if (viaEntry && effectiveInbound.id !== inbound.id) {
+        const entryStream = effectiveInbound.stream_settings || {};
+        const exitStream = inbound.stream_settings || {};
+        streamSettings = {
+            ...exitStream,
+            security: entryStream.security || exitStream.security,
+            realitySettings: entryStream.realitySettings || exitStream.realitySettings,
+            tlsSettings: entryStream.tlsSettings || exitStream.tlsSettings,
+        };
+    } else {
+        streamSettings = effectiveInbound.stream_settings || {};
+    }
+
+    if (effectiveInbound.protocol == "vless" && streamSettings.security == "reality") {
+        if (!streamSettings.network || streamSettings.network == "tcp") {
+            if (!streamSettings.xhttpSettings) streamSettings.xhttpSettings = { path: "/", mode: "auto" };
+        }
+    }
+
+    const settings = streamSettings.network === 'xhttp'
+        ? { ...(effectiveInbound.settings || {}), flow: '' }
+        : (effectiveInbound.settings || {});
+
+    // Генерируем link для каждого SNI
+    const links = [];
+    for (const sni of sniList) {
+        const remark = encodeURIComponent(`${client.name} | ${sni}`);
+        switch (effectiveInbound.protocol) {
+            case 'vless':
+                links.push(buildVlessLink(client, address, port, streamSettings, settings, remark, sni));
+                break;
+        }
+    }
+
+    return links;
+}
+
+function buildVlessLink(client, address, port, stream, settings, remark, sniOverride) {
     const uuid = client.xray_uuid;
     const params = new URLSearchParams();
 
@@ -1291,9 +1437,12 @@ function buildVlessLink(client, address, port, stream, settings, remark) {
         const rs = stream.realitySettings || {};
         if (rs.publicKey) params.set('pbk', rs.publicKey);
         if (rs.shortIds?.[0]) params.set('sid', rs.shortIds[0]);
-        // SNI = домен сервера (address) если это домен, иначе из serverNames
-        const isAddressDomain = address && !/^\d+\.\d+\.\d+\.\d+$/.test(address) && !address.includes(':');
-        const sni = isAddressDomain ? address : (rs.serverNames?.[0] || address);
+        // SNI: sniOverride > домен сервера (address) > serverNames[0]
+        let sni = sniOverride;
+        if (!sni) {
+            const isAddressDomain = address && !/^\d+\.\d+\.\d+\.\d+$/.test(address) && !address.includes(':');
+            sni = isAddressDomain ? address : (rs.serverNames?.[0] || address);
+        }
         if (sni) params.set('sni', sni);
         params.set('fp', rs.fingerprint || 'chrome');
         if (rs.spiderX) params.set('spx', rs.spiderX);
@@ -1514,6 +1663,7 @@ module.exports = {
     collectXrayStats,
     // Share links
     generateShareLink,
+    generateShareLinks,
     // Мульти-сервер
     getEntryServersForExit,
     deployWithEntries,

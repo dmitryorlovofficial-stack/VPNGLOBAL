@@ -36,6 +36,8 @@ export default function InboundModal({ serverId, inbound, onClose, onSaved }) {
         realityShortIds: (inbound?.stream_settings?.realitySettings?.shortIds || ['']).join(', '),
         realityFingerprint: inbound?.stream_settings?.realitySettings?.fingerprint || 'chrome',
         realitySpiderX: inbound?.stream_settings?.realitySettings?.spiderX || '/',
+        // SNI list для мульти-SNI подписки (разные операторы)
+        sniList: (inbound?.sni_list || []).join(', '),
         // WebSocket
         wsPath: inbound?.stream_settings?.wsSettings?.path || '/',
         wsHost: inbound?.stream_settings?.wsSettings?.headers?.Host || '',
@@ -139,6 +141,11 @@ export default function InboundModal({ serverId, inbound, onClose, onSaved }) {
                 destOverride: ['http', 'tls'],
             };
 
+            // SNI list для мульти-SNI подписки
+            const sni_list = form.sniList
+                ? form.sniList.split(',').map(s => s.trim()).filter(Boolean)
+                : [];
+
             const data = {
                 server_id: serverId,
                 tag: form.tag,
@@ -149,6 +156,7 @@ export default function InboundModal({ serverId, inbound, onClose, onSaved }) {
                 stream_settings,
                 sniffing,
                 remark: form.remark,
+                sni_list,
             };
 
             if (isEdit) {
@@ -363,6 +371,20 @@ export default function InboundModal({ serverId, inbound, onClose, onSaved }) {
                                     className={inputClass}
                                     placeholder="/"
                                 />
+                            </div>
+
+                            {/* SNI list для подписки */}
+                            <div>
+                                <label className={labelClass}>SNI для подписки (операторы)</label>
+                                <input
+                                    value={form.sniList}
+                                    onChange={e => setForm({ ...form, sniList: e.target.value })}
+                                    className={inputClass}
+                                    placeholder="max.ru, vk.com, ya.ru"
+                                />
+                                <p className="text-[10px] text-gray-500 mt-1">
+                                    Через запятую. Подписка вернёт отдельный конфиг для каждого SNI. Пусто = один стандартный конфиг.
+                                </p>
                             </div>
                         </div>
                     )}
