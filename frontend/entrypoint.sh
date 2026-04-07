@@ -148,6 +148,19 @@ else
     # Режим 3: HTTP (без SSL, текущее поведение)
     # ═══════════════════════════════════════════════════
     cat > /etc/nginx/conf.d/default.conf << NGINXEOF
+# Редирект с порта 80 на панель
+server {
+    listen 80;
+    location /.well-known/acme-challenge/ {
+        root /var/www/acme-challenge;
+        try_files \$uri =404;
+    }
+    location / {
+        return 301 http://\$host:${LISTEN_PORT}\$request_uri;
+    }
+}
+
+# Панель управления
 server {
     listen ${LISTEN_PORT};
     root /usr/share/nginx/html;
