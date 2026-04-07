@@ -21,6 +21,14 @@ DOMAIN="${PANEL_DOMAIN:-}"
 CERT_PATH="/etc/letsencrypt/live/${DOMAIN}/fullchain.pem"
 KEY_PATH="/etc/letsencrypt/live/${DOMAIN}/privkey.pem"
 
+echo "[NGINX] === Диагностика ==="
+echo "[NGINX] PANEL_PORT=${LISTEN_PORT} BACKEND=${BACKEND}"
+echo "[NGINX] SSL_ENABLED=${SSL} PANEL_DOMAIN=${DOMAIN}"
+echo "[NGINX] ssl.env: $(cat /app/configs/ssl.env 2>/dev/null || echo 'не найден')"
+echo "[NGINX] Cert: $(ls -la ${CERT_PATH} 2>/dev/null || echo 'НЕТ')"
+echo "[NGINX] Key: $(ls -la ${KEY_PATH} 2>/dev/null || echo 'НЕТ')"
+echo "[NGINX] ================="
+
 if [ "$SSL" = "true" ] && [ -n "$DOMAIN" ] && [ -f "$CERT_PATH" ] && [ -f "$KEY_PATH" ]; then
     # ═══════════════════════════════════════════════════
     # Режим 1: HTTPS (сертификат есть)
@@ -41,9 +49,10 @@ server {
     }
 }
 
-# HTTPS
+# HTTPS (443 + PANEL_PORT)
 server {
     listen 443 ssl http2;
+    listen ${LISTEN_PORT} ssl http2;
     server_name ${DOMAIN};
 
     # SSL-сертификат (Let's Encrypt)
@@ -97,7 +106,7 @@ server {
 }
 NGINXEOF
 
-    echo "[NGINX] HTTPS: ${DOMAIN}, :80 (redirect) + :443 (SSL), proxy -> ${BACKEND}"
+    echo "[NGINX] HTTPS: ${DOMAIN}, :80 (redirect) + :443 + :${LISTEN_PORT} (SSL), proxy -> ${BACKEND}"
 
 elif [ "$SSL" = "true" ] && [ -n "$DOMAIN" ]; then
     # ═══════════════════════════════════════════════════
