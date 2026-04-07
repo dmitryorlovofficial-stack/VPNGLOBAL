@@ -175,11 +175,30 @@ async function buildXrayConfig(serverId) {
     const server = await queryOne('SELECT domain FROM servers WHERE id = $1', [serverId]);
     const serverDomain = server?.domain || null;
 
+    // Проверяем статус stub site (если dest = 127.0.0.1, а stub не активен — фоллбэк на google)
+    const stubSite = await queryOne(
+        "SELECT status FROM stub_sites WHERE server_id = $1",
+        [serverId]
+    );
+    const stubActive = stubSite?.status === 'active';
+
     // Получаем все inbounds сервера
     const inbounds = await queryAll(
         'SELECT * FROM xray_inbounds WHERE server_id = $1 AND is_enabled = TRUE ORDER BY id',
         [serverId]
     );
+
+    // Фикс: если dest=127.0.0.1 но stub site не активен — сбрасываем на google
+    for (const ib of inbounds) {
+        const rs = ib.stream_settings?.realitySettings;
+        if (rs?.dest?.startsWith('127.0.0.1') && !stubActive) {
+            console.warn(`[XRAY] Inbound ${ib.tag}: dest=${rs.dest} но stub site не активен — фоллбэк на google`);
+            rs.dest = 'www.google.com:443';
+            if (!rs.serverNames?.length || rs.serverNames.every(s => /^\d+\.\d+\.\d+\.\d+$/.test(s))) {
+                rs.serverNames = ['www.google.com'];
+            }
+        }
+    }
 
     // Получаем клиентов для каждого inbound
     const xrayInbounds = [];
