@@ -1239,7 +1239,11 @@ async function generateShareLink(clientId) {
         );
         viaEntry = !!entryServer;
         const linkServer = entryServer || server;
-        address = linkServer.domain || linkServer.ipv4;
+        address = linkServer.domain || linkServer.ipv4 || linkServer.host;
+    }
+
+    if (!address) {
+        throw new Error(`Нет адреса для подключения (server #${server.id}: domain=${server.domain}, ipv4=${server.ipv4}, host=${server.host})`);
     }
 
     const port = effectiveInbound.port;
@@ -1284,20 +1288,22 @@ async function generateShareLink(clientId) {
  * Если sni_list пустой — возвращает один стандартный link.
  */
 async function generateShareLinks(clientId) {
-    const client = await queryOne('SELECT * FROM clients WHERE id = $1', [clientId]);
-    if (!client) throw new Error('Клиент не найден');
-    if (!client.xray_inbound_id) throw new Error('Клиент не привязан к Xray inbound');
+    // Пробуем мульти-SNI, при любой ошибке — fallback на обычный generateShareLink
+    try {
+        const client = await queryOne('SELECT * FROM clients WHERE id = $1', [clientId]);
+        if (!client) throw new Error('Клиент не найден');
+        if (!client.xray_inbound_id) throw new Error('Клиент не привязан к Xray inbound');
 
-    const inbound = await queryOne('SELECT * FROM xray_inbounds WHERE id = $1', [client.xray_inbound_id]);
-    if (!inbound) throw new Error('Inbound не найден');
+        const inbound = await queryOne('SELECT * FROM xray_inbounds WHERE id = $1', [client.xray_inbound_id]);
+        if (!inbound) throw new Error('Inbound не найден');
 
-    const sniList = Array.isArray(inbound.sni_list) ? inbound.sni_list.filter(s => s) : [];
+        const sniList = Array.isArray(inbound.sni_list) ? inbound.sni_list.filter(s => s) : [];
 
-    // Если sni_list пустой — обычная генерация одного link
-    if (sniList.length === 0) {
-        const link = await generateShareLink(clientId);
-        return [link];
-    }
+        // Если sni_list пустой — обычная генерация одного link
+        if (sniList.length === 0) {
+            const link = await generateShareLink(clientId);
+            return [link];
+        }
 
     // Повторяем логику generateShareLink для получения address, port, streamSettings, settings
     const server = await queryOne('SELECT * FROM servers WHERE id = $1', [inbound.server_id]);
@@ -1372,7 +1378,11 @@ async function generateShareLinks(clientId) {
         );
         viaEntry = !!entryServer;
         const linkServer = entryServer || server;
-        address = linkServer.domain || linkServer.ipv4;
+        address = linkServer.domain || linkServer.ipv4 || linkServer.host;
+    }
+
+    if (!address) {
+        throw new Error(`Нет адреса для подключения (server #${server.id}: domain=${server.domain}, ipv4=${server.ipv4}, host=${server.host})`);
     }
 
     const port = effectiveInbound.port;
@@ -1413,6 +1423,13 @@ async function generateShareLinks(clientId) {
     }
 
     return links;
+
+    } catch (err) {
+        // Fallback: при любой ошибке мульти-SNI — вернуть обычный link
+        console.warn(`[XRAY] generateShareLinks fallback для #${clientId}:`, err.message);
+        const link = await generateShareLink(clientId);
+        return [link];
+    }
 }
 
 function buildVlessLink(client, address, port, stream, settings, remark, sniOverride) {

@@ -369,7 +369,7 @@ router.get('/:token', async (req, res) => {
         res.type('text/plain').send(encoded);
 
     } catch (err) {
-        console.error('[SUB] Ошибка:', err.message);
+        console.error('[SUB] Ошибка:', err.message, err.stack);
         res.status(500).type('text/plain').send('Error');
     }
 });
