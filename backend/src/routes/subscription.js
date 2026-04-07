@@ -347,12 +347,15 @@ router.get('/:token', async (req, res) => {
 
         // Собираем share links для всех Xray-протоколов (с мульти-SNI)
         const links = [];
+        console.log(`[SUB] Клиентов: ${activeClients.length}, протоколы: ${activeClients.map(c => `${c.protocol}(inbound:${c.xray_inbound_id})`).join(', ')}`);
         for (const c of activeClients) {
             if (XRAY_PROTOCOLS.includes(c.protocol) && c.xray_inbound_id) {
                 try {
                     const multiLinks = await xrayService.generateShareLinks(c.id);
                     if (multiLinks) links.push(...multiLinks);
-                } catch {}
+                } catch (err) {
+                    console.error(`[SUB] Ошибка генерации link для клиента #${c.id} (${c.name}):`, err.message);
+                }
             }
         }
 
