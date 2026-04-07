@@ -339,7 +339,8 @@ router.get('/:token', async (req, res) => {
 
         // Заголовки для VPN-клиентов
         res.setHeader('profile-update-interval', '1');
-        res.setHeader('content-disposition', `attachment; filename="${firstName}"`);
+        const safeFilename = encodeURIComponent(firstName).replace(/%20/g, '_');
+        res.setHeader('content-disposition', `attachment; filename="${safeFilename}"; filename*=UTF-8''${safeFilename}`);
         res.setHeader(
             'subscription-userinfo',
             `upload=${totalUpload}; download=${totalDownload}; total=${totalLimit}; expire=${earliestExpire}`
